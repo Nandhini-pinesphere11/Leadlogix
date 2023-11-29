@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<style>
+    /* Import Font Dancing Script */
+    @import url(https://fonts.googleapis.com/css?family=Dancing+Script);
+
+    * {
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #F4F6FE;
+        overflow: hidden;
+    }
+
+    .title {
+        padding-top: 15px;
+        position: absolute;
+        left: 45%;
+    }
+
+    /* Main */
+    .main {
+        margin-top: 0%;
+        margin-left: 5%; /* Adjusted for better responsiveness */
+        margin-right: 5%; /* Adjusted for better responsiveness */
+        font-size: 15px;
+        padding: 0 10px;
+    }
+
+    @media (min-width: 992px){
+    .col-lg-8 {
+        -ms-flex: 0 0 66.666667%;
+        flex: 0 0 66.666667%;
+        max-width: 900px;
+        background: #F4F6FE;
+    }
+}
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #F4F6FE;
+    background-clip: border-box;
+    border: 0px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
+p{
+    font-size:1rem;
+}
+</style>
+
+    <!-- Navbar top -->
+  
+    <!-- End -->
+
+    <!-- Sidenav -->
+  
+    <!-- End -->
+
+    <!-- Main -->
+    <div class="main">
+        <section >
+            <div class="container py-5">
+              <div class="row">
+                 <h2 style="text-align:center;"><b>PROFILE</b></h2>
+              </div>
+           <hr>
+              <div class="row">
+           
+                </div>
+                          <h3>Plan and Subscription</h3>
+                <div class="col-lg-8">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">Company Name:</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.company_name }}</p>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">Email</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.email }}</p>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">Phone</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.phone_country_code }} {{ user_profile.phone_number }}</p>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">Plan Name</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.plan_name }}</p>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">Start Date</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.from_date }}</p>
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <p class="mb-0">End Date</p>
+                        </div>
+                        <div class="col-sm-9">
+                          <p class="text-muted mb-0">{{ user_profile.end_date }}</p>
+                        </div>
+                      </div>
+                     
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                          <p class="mb-4"><h3>Reference Information</h3>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">Reference No:</span>
+                              <span class="text-muted">{{ user_profile.reference_number }}</span>
+                          </p>
+                           <p class="mb-4"><h3>Contact Information</h3>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">Contact Person:</span>
+                              <span class="text-muted">{{ user_profile.contact_person }}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                          <p class="mb-4">  <h3>Address Information</h3>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">Address 1:</span>
+                              <span class="text-muted">{{ user_profile.address1 }}</span>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">Address 2:</span>
+                              <span class="text-muted">{{ user_profile.address2 }}</span>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">City:</span>
+                              <span class="text-muted">{{ user_profile.city }}</span>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">State:</span>
+                              <span class="text-muted">{{ user_profile.state }}</span>
+                          </p>
+                          <p style="margin-bottom: 1rem;">
+                              <span style="display: inline-block; min-width: 100px;">Postcode:</span>
+                              <span class="text-muted">{{ user_profile.postcode }}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section> 
+    </div>   
+    <!-- End -->
+    {% endblock %}

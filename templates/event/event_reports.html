@@ -1,0 +1,552 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+ 
+
+<head>
+
+  <!-- Required meta tags -->
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Strings Infinity</title>
+
+  <!-- plugins:css -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+
+  <!-- endinject -->
+
+  <!-- Plugin css for this page -->
+
+  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}">
+
+  <!-- End plugin css for this page -->
+
+  <!-- inject:css -->
+
+  <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
+
+  <!-- endinject -->
+
+  <link rel="shortcut icon" href="{% static 'images/logo-mini1.jpg' %}" />
+
+  <style>
+    /* Customized Pagination Styles */
+.pagination-container {
+    text-align: right; /* Align pagination to the right */
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.step-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step-links a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    margin: 2px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.step-links a:hover {
+    background-color: #f5f5f5;
+}
+
+.current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+.loader-container {
+      position: relative;
+    }
+  
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+      z-index: 1000; /* Ensure it's above other elements */
+    }
+  
+    .loader {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1001; /* Ensure it's above the overlay */
+    }
+  
+    .loader img {
+      /* Adjust the width and height based on your loading spinner GIF dimensions */
+      width: 50px;
+      height: 50px;
+    }
+</style>
+</head>
+
+<body>
+
+  <div class="container-scroller">
+
+    <!-- partial:partials/_navbar.html -->
+
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+
+        <a class="navbar-brand brand-logo mr-5" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini.png' %}" class="mr-2" alt="logo"/></a>
+
+        <a class="navbar-brand brand-logo-mini" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini1.jpg' %}" alt="logo"/></a>
+
+      </div>
+
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+
+          <span class="icon-menu"></span>
+
+        </button>
+
+    
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+
+            <a class="nav-link" href="{% url 'Create_event' %}" >
+
+              <img src="{% static 'images/faces/backicon4.svg' %}" alt="profile"/>
+            </a>
+
+           
+
+            </div>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="icon-menu"></span>
+            </button>
+
+          </li>          
+
+        </ul>
+
+      </div>
+
+    </nav>
+
+    <!-- partial -->
+
+    <div class="container-fluid page-body-wrapper">
+
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
+        <ul class="nav">
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_dashboard' username=request.user.username event_id=event.id %}">
+
+              <i class="icon-grid menu-icon"></i>
+
+              <span class="menu-title">Dashboard</span>
+
+            </a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_reports' username=request.user.username event_id=event.id %}">
+              <i class="icon-paper menu-icon"></i>
+
+              <span class="menu-title">Reports</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_form' event_id=event.id %}">
+
+              <i class="icon-layout menu-icon"></i>
+
+              <span class="menu-title">Event Form</span>
+
+            </a>
+
+          </li>
+
+
+
+        </ul>
+
+      </nav>
+
+      <!-- partial -->
+
+      <div class="main-panel">
+
+        <div class="content-wrapper">
+
+          <div class="row">
+
+            <div class="col-md-12 grid-margin">
+
+              <div class="row">                
+
+              </div>
+
+            </div>
+
+          </div>
+<!-- Your existing code to display ComposeMessage objects -->
+{% if messages %}
+          {% for message in messages %}
+            {% if message.tags == 'success' %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert" id="successMessage">
+            {% elif message.tags == 'error' %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorMessage">
+            {% else %}
+              <div class="alert alert-info alert-dismissible fade show" role="alert" id="infoMessage">
+            {% endif %}
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+          {% endfor %}
+        {% endif %}
+            <div class="row justify-content-end">
+              <div class="col-md-6">
+                  <form method="get" class="d-flex justify-content-end">
+                      {{ form.date_filter }}
+                      <button type="submit" class="btn btn-primary ml-2">Apply</button>
+                  </form>
+              </div>
+            </div>                            
+          
+          <div class="row mt-3">
+            <div class="col-lg-12 grid-margin stretch-card">            
+
+              <div class="card">
+
+                <div class="card-body">
+
+                  <h4 class="card-title">Engagement Details</h4>              
+                  <div class="container px-6 mx-auto grid">
+                    <div class="download-icon" style="position: absolute; top: 0; right: 0; padding: 10px;">
+                        {% if state_filter %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?state={{ state_filter }}" id="downloadButton">
+                        {% elif date_filter_choice  %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?date_filter={{ date_filter_choice }}" id="downloadButton">
+                        {% elif selected_data %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?selected_data={{ selected_data }}" id="downloadButton">
+                        {% elif product_data %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?product_data={{ product_data }}" id="downloadButton">
+                        {% elif selected_date %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?selected_date={{ selected_date }}" id="downloadButton">
+                        {% elif engaged_by %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}?engaged_by={{ engaged_by }}" id="downloadButton">
+                        {% else %}
+                        <a href="{% url 'fetch_datas' username=request.user.username event_id=event.id %}" id="downloadButton">
+                        {% endif %}
+                            <img src="{% static 'assets/img/excel.png' %}" alt="" style="height: 30px; width: 30px;">
+                            <!-- Font Awesome icon for Excel -->
+                        </a>
+                        <img src="{% static 'images/compose.png' %}" alt="Compose" style="height: 30px; width: 30px;" data-toggle="modal" data-target="#composeModal">
+
+                    </div>
+                </div>
+
+                  <div class="table-responsive">
+
+                      <table class="table table-striped">                  
+                        <thead>
+                            <tr>
+                              <th><input type="checkbox" id="selectAllBtn" ></th>
+
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Phone No</th>
+                                <th>Email</th>
+                                <th>From</th>
+                                <th>Date of Enquiry</th>
+                                <th>Engaged By</th>
+                                <th>Customer Confidence</th>
+                                <th>Products</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in page_obj %}
+                            <tr>
+                              <td><input type="checkbox" class="row-checkbox" name="selected_contacts" value="{{ contact.id }}"></td>
+
+                                <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                                <td class="py-1">{{ contact.first_name }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ contact.state }}</td>
+                                <td>{{ contact.date_of_enquiry }}</td>
+                                <td>{{ contact.engaged_by }}</td>  
+                                <td>{{ contact.customer_confidence }}</td>   
+                                <td>{{ contact.interested_products }}</td>            
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                  
+                    <!-- Pagination Controls -->
+                    <!-- Pagination Controls - Customized for Right Alignment -->
+                    <div class="pagination-container">
+                      <div class="pagination">
+                        <span class="step-links">
+                          {% if page_obj.has_previous %}
+                            <a href="?page=1
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-left"></i>
+                            </a>
+                          {% endif %}
+                    
+                          <span class="current-page">{{ page_obj.number }}</span>
+                    
+                          {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-right"></i>
+                            </a>
+                          {% endif %}
+                        </span>
+                      </div>
+                    </div>
+                  
+                    <span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} Pages</span>
+                  </div>
+
+                </div>
+
+              </div>          
+            </div>
+          </div>
+<!-- Compose Modal -->
+<div class="modal fade" id="composeModal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="composeModalLabel">Compose Message</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <div class="loader-container" style="display: none;">
+                  <div class="loader-overlay"></div>
+                  <div class="loader">
+                      <!-- You can replace 'loading.gif' with the path to your preferred loading spinner GIF -->
+                      <img src="{% static 'images/loading1.gif' %}" alt="Loading...">
+                  </div>
+              </div>
+              <!-- Use the compose_form instead of existing_message to populate form fields -->
+              <form method="post" action="{% url 'compose_message' %}" enctype="multipart/form-data" id="composeForm">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <label for="subject">Subject</label>
+                      <input type="text" class="form-control" id="subject" name="subject" value="">
+                  </div>
+                  <div class="form-group">
+                      <label for="message">Message</label>
+                      <textarea class="form-control" id="message" rows="3" name="message"></textarea>
+                  </div>
+                  <input type="hidden" id="selectedEmails" name="selectedEmails" value="">
+
+                  <div class="form-group">
+                      <label for="attachments">Attachments</label>
+                      <!-- Input for new attachments -->
+                      <input type="file" class="form-control-file" id="attachments" name="attachments" multiple>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6"></div>
+                      <div class="col-md-6 text-right">
+                          <button type="submit" class="btn btn-primary" id="sendButton">Mail Send</button>
+                      </div>
+                  </div>
+              </form>
+          </div>
+
+          <div class="modal-footer">
+              <!-- Add your success message alert here -->
+              {% if success_message %}
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      {{ success_message }}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+              {% endif %}
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Script to show/hide loader on form submission -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        var composeModal = $('#composeModal');
+        var loaderContainer = $('.loader-container');
+
+        // Simple test to check if jQuery is working
+        console.log('jQuery version:', $.fn.jquery);
+
+        // Add an event listener for the send mail button
+        $('#composeForm').submit(function () {
+            // Show the loader before the form is submitted
+            loaderContainer.show();
+        });
+
+        // Add an event listener for modal hide event
+        composeModal.on('hidden.bs.modal', function () {
+            // Clear form fields on modal close
+            $('#composeForm')[0].reset();
+        });
+    });
+</script>
+          <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Select All button click event
+    $("#selectAllBtn").click(function () {
+      // Check or uncheck all checkboxes based on the state of the "Select All" checkbox
+      var isChecked = $("#selectAllBtn").prop("checked");
+      $(".row-checkbox").prop("checked", isChecked);
+      updateSelectedEmails();
+    });
+
+    // Checkbox click event
+    $(".row-checkbox").click(function () {
+      updateSelectedEmails();
+    });
+
+    // "Mail Send" button click event
+    $("#sendButton").click(function () {
+      updateSelectedEmails();
+      // Trigger the form submission
+      $("#composeForm").submit();
+    });
+
+    // Function to update the selected emails in the hidden input
+    function updateSelectedEmails() {
+      var selectedEmails = [];
+      $(".row-checkbox:checked").each(function () {
+        var row = $(this).closest("tr");
+        var email = row.find("td:eq(4)").text(); // Assuming email is in the 5th column (index 4)
+        selectedEmails.push(email);
+      });
+      $("#selectedEmails").val(selectedEmails.join(','));
+    }
+  });
+</script>
+      <footer class="footer">
+
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+          <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023.  <a href="https://stringsinfinity.com//" target="_blank">Strings Infinity</a> All rights reserved.</span>
+        </div>
+  
+      </footer>
+ 
+                              
+    
+
+    <!-- plugins:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+    <script src="{% static 'js/dataTables.select.min.js' %}"></script>
+  
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/settings.js' %}"></script>
+    <script src="{% static 'js/todolist.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
+    <!-- End custom js for this page-->
+
+
+     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  </body>
+  
+  </html>
+  
+  

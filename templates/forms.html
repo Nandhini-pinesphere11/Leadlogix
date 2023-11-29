@@ -1,0 +1,563 @@
+{% load static %}
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Skydash Admin</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+
+    <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Strings Infinity</title>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+  
+      <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+      <!-- Fontawesome CDN Link For Icons -->
+  
+      <style>
+          body {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  }
+  
+  .keywords-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  }
+  
+  .keyword-button {
+  display: inline-block;
+  margin: 5px;
+  padding: 8px 10px;
+  border-radius: 5px; /* Change border-radius for square shape */
+  background: linear-gradient(180deg, #f0f0f0, #d0d0d0);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  }
+  
+  .keyword-button.selected {
+  background: linear-gradient(180deg, #007bff, #0056b3);
+  color: white;
+  }
+  
+  
+  
+  #showMoreButton {
+  
+  display: none;
+  
+  margin-top: 10px;
+  
+  }
+        body {
+            font-family: Arial, sans-serif;
+        }
+  
+        #popupFormContainer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+  
+        #popupForm {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+        }
+  
+        .close {
+      position: absolute;
+      bottom: 10px;
+      right: 36px;
+      font-size: 20px;
+      z-index: 1;
+      cursor: pointer;
+      top: 700px;
+  }
+  
+    #popupForm:hover .close {
+        visibility: visible; /* Show the close button when the popupForm is hovered */
+    }
+  
+    .close:hover {
+        color: red;
+    }
+  
+        #successMessage {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            padding: 5px;
+            background-color: #a0d468;
+            color: #fff;
+            border-radius: 5px;
+        }
+  
+        #EnquiryForm {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+  
+        #EnquiryForm input,
+        #EnquiryForm textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+  
+        #EnquiryForm textarea {
+            resize: vertical;
+        }
+        #resetBtn {
+      background-color: red; /* Set the red background color */
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-end; /* Align to the right bottom corner */
+    }
+  
+    #resetBtn:hover {
+      background-color: darkred; /* Darker red color on hover */
+    }
+        #submitBtn {
+      background-color: #136aeb;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: auto; /* This aligns the button to the right */
+      align-self: flex-end; /* Ensures button stays at the bottom */
+    }
+  
+        #submitBtn:hover {
+            background-color: #23568b;
+        }
+         /* Add your custom styles here */
+      .popupForm {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .form-group {
+        margin-bottom: 20px;
+      }
+  
+      .form-inline label {
+        display: inline-block;
+        width: 100px;
+      }
+  
+      .form-inline input,
+      .form-inline select {
+        width: calc(50% - 60px);
+        margin-right: 20px;
+      }
+  
+      .form-group.email {
+        display: flex;
+        flex-direction: column;
+      }
+  
+      .form-group.email label,
+      .form-group.email input {
+        width: 100%;
+      }
+  
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+      }
+  
+      .form-row .form-group {
+        width: 48%;
+      }
+  
+      .keywords-box {
+        display: flex;
+        align-items: center;
+      }
+  
+      .keywords-box button {
+        margin-left: auto;
+      }
+  
+      .form-group textarea {
+        width: 100%;
+        height: 100px;
+      }
+  
+      #successMessage {
+        display: none;
+        margin-top: 10px;
+        color: green;
+      }
+  
+      /* Media queries for responsiveness */
+      @media (max-width: 768px) {
+        .form-row {
+          flex-direction: column;
+        }
+  
+        .form-row .form-group {
+          width: 100%;
+        }
+  
+        .keywords-box {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+    </head>
+  <body>
+ 
+        <div id="popupFormContainer">
+          <div id="popupForm" style="width:800px;">
+             
+              <h2>Popup Form</h2>
+                <form id="contactForm" method="post" action="{% url 'forms' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="firstname">First Name</label>
+                    <input type="text" id="firstname" name="first_name" placeholder="Enter your First name" required>
+                    <span class="error-message" id="firstnameError"></span>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="lastname">Last Name</label>
+                    <input type="text" id="lastname" name="last_name" placeholder="Enter your Last name" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                  <label for="email">Email Address</label>
+                  <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="gender">State</label>
+                  <select class="form-control" id="gender" name="state">
+                    <option value="" selected disabled>Select your state</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Assam">Assam</option>
+                  </select>
+                </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="date">Date of Enquiry</label>
+                    <input type="date" class="form-control" id="date" name="date_of_enquiry" placeholder="Select your date" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">+91</span>
+                        </div>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" pattern="^\d{10,12}$" required>
+                    </div>
+                    <span class="error-message" id="phoneError">Enter a valid phone number</span>
+                </div>
+                </div>
+               
+                <label for="keyword">Enquiry Attended By (Optional)</label>
+                <div class="keywords-box">
+                 
+                  <div id="keywordContainer">
+                    <!-- Keywords will be displayed here -->
+                  </div>        
+                  <button class="primary-btn" id="showMoreButton" onclick="showMoreKeywords()">Show More</button>
+               </div>
+               <div class="form-group col-md-6">
+                <label for="product">Products</label>
+                <select class="form-control" id="product" name="product">
+                  <option value="" selected disabled>Select your products</option>
+                  <option value="product1">Product 1</option>
+                  <option value="product2">Product 2</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            
+                <div class="form-group">
+                  <label for="message">Message</label>
+                  <textarea name="message" placeholder="Message" required></textarea>
+                </div>
+                <div class="form-group">
+                  <button type="reset" id="resetBtn">Reset</button>
+                  <button type="submit" id="submitBtn">Submit</button>
+                </div>
+                <span class="close" id="closeFormBtn" style="position: absolute; top: 700px; bottom: 10px; right: 10px; font-size: 20px; z-index: 1; cursor: pointer;">&times;</span>
+              </form>
+              <div id="successMessage">Form submitted successfully!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Rest of the HTML code remains unchanged -->
+  
+
+      
+    <script>
+      const keywords = ['Abi', 'Kiruthi', 'Sangeetha', 'Manju', 'Nandhu', 'Vyshu', 'Nivee', 'Kavya', 'Arul', 'Gokul'];
+  const selectedKeywords = [];
+  let visibleKeywords = 5;
+  const increment = 5;
+  
+  function toggleKeyword(keyword) {
+  
+    const index = selectedKeywords.indexOf(keyword);
+  
+    if (index === -1) {
+  
+      selectedKeywords.push(keyword);
+  
+    } else {
+  
+      selectedKeywords.splice(index, 1);
+  
+    }
+  
+   
+  
+    displayKeywords();
+  
+  }
+   
+   function displayKeywords() {
+  
+    const keywordContainer = document.getElementById('keywordContainer');
+  
+    keywordContainer.innerHTML = '';
+
+    keywords.slice(0, visibleKeywords).forEach(keyword => {
+  
+      const keywordButton = document.createElement('button');
+  
+      keywordButton.textContent = keyword;
+  
+      keywordButton.classList.add('keyword-button');
+  
+      if (selectedKeywords.includes(keyword)) {
+  
+        keywordButton.classList.add('selected');
+  
+      }
+    
+      keywordButton.onclick = () => toggleKeyword(keyword);
+  
+      keywordContainer.appendChild(keywordButton);
+  
+    });
+  
+  
+    if (keywords.length > visibleKeywords) {
+      document.getElementById('showMoreButton').style.display = 'block';
+    } else {
+      document.getElementById('showMoreButton').style.display = 'none';
+    }
+  }
+  
+  function showMoreKeywords() {
+    visibleKeywords += increment;
+    displayKeywords();
+  }
+  
+   
+  
+  // Display initial keywords
+  
+  displayKeywords();
+  
+      // Validate the form before submission
+      function validateForm() {
+          const first_nameInput = document.querySelector('input[name="first_name"]');
+          const last_nameInput = document.querySelector('input[name="last_name"]');
+          const emailInput = document.querySelector('input[name="email"]');
+          const messageInput = document.querySelector('textarea[name="message"]');
+          const phoneInput = document.querySelector('input[name="phone"]');
+          const productInput = document.querySelector('select[name="product"]');
+          const stateInput = document.querySelector('select[name="state"]');
+          const dateInput = document.querySelector('input[name="date_of_enquiry"]');
+          let isValid = true;
+
+                  if (selectedKeywords.length === 0) {
+            document.getElementById('keywordContainer').style.border = '1px solid grey';
+            isValid = false;
+          } else {
+            document.getElementById('keywordContainer').style.border = '1px solid #ccc';
+          }
+
+          // Validate Name
+          if (dateInput.value.trim() === "") {
+            dateInput.style.border = "1px solid grey";
+              isValid = false;
+          } else {
+            dateInput.style.border = "1px solid #ccc";
+                    }
+            // Validate Name
+            if (first_nameInput.value.trim() === "") {
+              first_nameInput.style.border = "1px solid grey";
+                        isValid = false;
+                    } else {
+                      first_nameInput.style.border = "1px solid #ccc";
+                    }
+                    // Validate Name
+            if (last_nameInput.value.trim() === "") {
+              last_nameInput.style.border = "1px solid grey";
+                        isValid = false;
+                    } else {
+                      last_nameInput.style.border = "1px solid #ccc";
+                    }
+          // Validate Email
+          const emailRegex = /^\S+@\S+\.\S+$/;
+          if (!emailRegex.test(emailInput.value.trim())) {
+              emailInput.style.border = "1px solid grey";
+              isValid = false;
+          } else {
+              emailInput.style.border = "1px solid #ccc";
+          }
+  
+            // Validate State
+            if (stateInput.value === "") {
+                stateInput.style.border = "1px solid grey";
+                isValid = false;
+            } else {
+                stateInput.style.border = "1px solid #ccc";
+            }
+
+          // Validate Message
+          if (messageInput.value.trim() === "") {
+              messageInput.style.border = "1px solid grey";
+              isValid = false;
+          } else {
+              messageInput.style.border = "1px solid #ccc";
+          }
+          // Validate Message
+          if (productInput.value.trim() === "") {
+            productInput.style.border = "1px solid grey";
+                    isValid = false;
+                } else {
+                  productInput.style.border = "1px solid #ccc";
+                }
+                
+         // Validate Phone
+        const phoneRegex = /^(\d[-\s]?){10,12}$/; // Allowing phone numbers with 10 to 12 digits
+        if (!phoneRegex.test(phoneInput.value.trim())) {
+        phoneInput.style.border = "1px solid grey";
+        document.getElementById("phoneError").style.display = "block"; // Show error message
+        isValid = false;
+}  
+        else {
+        phoneInput.style.border = "1px solid #ccc";
+        document.getElementById("phoneError").style.display = "none"; // Hide error message     
+}
+
+         return isValid;
+      }
+  
+      document.addEventListener("DOMContentLoaded", function() {
+        const closeFormBtn = document.getElementById("closeFormBtn");
+        const popupFormContainer = document.getElementById("popupFormContainer");
+        const successMessage = document.getElementById("successMessage");
+
+        // Function to show the popup form
+        function showPopupForm() {
+            popupFormContainer.style.display = "block";
+        }
+
+        // Function to hide the popup form
+        function hidePopupForm() {
+            popupFormContainer.style.display = "none";
+        }
+
+        // Function to reset form and success message
+        function resetForm() {
+            successMessage.style.display = "none";
+            contactForm.reset();
+            validateForm(); // Reset validation styles
+        }
+
+        // Show the popup form by default
+        showPopupForm();
+
+        // Close form button click event
+        closeFormBtn.addEventListener("click", function() {
+            hidePopupForm();
+        });
+
+        // Form submission handling
+        const contactForm = document.getElementById("contactForm");
+        contactForm.addEventListener("submit", function(e) {                
+            e.preventDefault();  
+            const formData = new FormData(contactForm);
+
+            if (validateForm()) {
+                // Simulating form submission with a delay
+                setTimeout(function() {
+                    successMessage.style.display = "block";
+                    resetForm();
+                }, 1000);
+
+                const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+                fetch("/forms/", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                    },
+                });
+            }
+        });
+
+        // Interval to show and hide the popup form every 1 minute
+        setInterval(function () {
+            hidePopupForm();
+            setTimeout(function () {
+                showPopupForm();
+            }, 1000); // Show the form after 1 second of hiding
+          }, 3 * 60 * 1000); // Repeat every 1 minute (60 seconds) in milliseconds
+    });
+    
+</script>
+  </body>
+</html>

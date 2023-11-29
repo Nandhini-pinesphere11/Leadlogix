@@ -1,0 +1,79 @@
+user_list.html
+***************
+										
+										<thead>
+											<tr>												
+												<th>Name</th>
+												<th style="padding:5px;">Is superuser</th>
+												<th>User Type</th>
+												<th>Last Login</th>
+												<th>Date Joined</th>
+												<th>Status</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+                                            {% for user in users %}
+											<tr>
+												
+												<td>						
+													<div>
+														<a href="#" class="h5">{{user.username}}</a>
+													</div>
+													<small class="fs-12 text-muted"> <span class="font-weight-normal1">{{user.email}}</span></small>
+													
+												</td>
+												<td style="padding:5px;">
+                                                    {% if user.is_superuser %}
+                                                        <span class="superuser-status">Superuser</span>
+                                                    {% else %}
+                                                        Staff User
+                                                    {% endif %}
+                                                </td>
+												<td>
+                                                    {% for group in user.groups.all %}
+                                                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        No groups
+                                                    {% endfor %}
+                                                </td>
+												<td>
+													<span class="badge light badge-success">{{user.last_login}}</span>
+												</td>
+												<td>
+													<span class="badge light  badge-danger">{{user.date_joined}}</span>
+												</td>
+												<td>
+													<span class="badge badge-success">Active</span>
+												</td>
+												<td>
+													<a href="{% url 'user_delete' user.id %}" class="btn btn-danger btn-sm">Delete</a>
+												</td>
+												
+											</tr>
+											
+										  {% endfor %}
+										</tbody>
+
+=====================================================================================
+
+master/views.py
+****************
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+
+def user_delete(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user.delete()
+    except User.DoesNotExist:
+        pass  # Handle the case where the user does not exist
+    return redirect('user_list')  # Redirect back to the user list page
+
+=========================================================================================
+
+    path('user/<int:user_id>/delete/', views.user_delete, name='user_delete'),
+
+==========================================================================================
+

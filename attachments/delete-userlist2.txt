@@ -1,0 +1,29 @@
+.btn-sm, .btn-group-sm > .btn {
+        font-size: 0.813rem !important;
+        padding: 0.122rem 1rem;
+    }
+
+
+==========================================================================
+
+
+<!-- Add this script block at the end of your user_list.html -->
+<script>
+    function confirmUserDeletion(userId) {
+        var result = confirm("Are you sure you want to delete this user?");
+        if (result) {
+            // If the user confirms, redirect to the delete URL
+            window.location.href = "{% url 'user_delete' 0 %}".replace('0', userId);
+        }
+    }
+</script>
+========================================================================================
+
+<td>
+    <a href="#" class="btn btn-danger btn-sm" onclick="confirmUserDeletion('{{ user.id }}')">Delete</a>
+</td>
+
+====================================================================================
+
+
+

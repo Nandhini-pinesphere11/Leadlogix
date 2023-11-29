@@ -1,0 +1,54 @@
+@login_required
+@allowed_users(allowed_roles=['StorePerson'])
+def export_to_pdf(request):
+    # Get the 'export' parameter from the request
+    authenticated_user = request.user
+    export_type = request.GET.get('export')
+
+    if export_type == 'pdf':
+        # Export to PDF
+        template_path = 'StorePerson/pdf_template.html'
+        all_tickets = Item.objects.filter(created_by=authenticated_user).order_by('-created')
+        context = {'all_tickets': all_tickets}
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="ticket_data.pdf"'
+        template = get_template(template_path)
+        html = template.render(context)
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+        return response
+
+    else:
+        # Handle other cases or errors
+        return HttpResponse('Invalid export type')
+
+
+
+@login_required
+@allowed_users(allowed_roles=['StorePerson'])
+def export_to_excel(request):
+    # Retrieve the data you want to export to Excel
+    authenticated_user = request.user
+    all_tickets = Item.objects.filter(created_by=authenticated_user).order_by('-created')
+
+    # Prepare the data in a DataFrame
+    data = {
+        'Ticket Number': [f"{ticket.store_code}-{ticket.id}" for ticket in all_tickets],
+        'Category': [ticket.category for ticket in all_tickets],
+        'Subcategory': [ticket.subcategory for ticket in all_tickets],
+        'Date': [ticket.created.strftime('%Y-%m-%d %H:%M:%S') for ticket in all_tickets],
+        'Status': [ticket.status for ticket in all_tickets],
+    }
+    df = pd.DataFrame(data)
+
+    # Create an Excel response
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="ticket_data.xlsx"'
+
+    # Write the DataFrame to the response
+    df.to_excel(response, index=False)
+
+    return response

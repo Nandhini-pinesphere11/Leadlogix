@@ -1,0 +1,468 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <!-- Add this to your template's head section -->
+
+  <style>
+  
+    /* Customized Pagination Styles */
+.pagination-container {
+    text-align: right; /* Align pagination to the right */
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.step-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step-links a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    margin: 2px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.step-links a:hover {
+    background-color: #f5f5f5;
+}
+
+.current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+.custom-button {
+        /* Add your custom styles here */
+        color: #898686; /* Text color */
+        padding: 5px 10px; /* Padding */
+        /* Add any other styles you want */
+    }
+</style>
+
+</head>
+
+
+      <!-- partial -->
+
+      <div class="main-panel">
+
+        <div class="content-wrapper">
+
+          <div class="row">
+
+            <div class="col-md-12 grid-margin">
+
+              <div class="row">                
+
+              </div>
+
+            </div>
+
+          </div>
+
+                                      
+          {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-success alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+      
+          <div class="row mt-3">
+            <div class="col-lg-12 grid-margin stretch-card">            
+
+              <div class="card">
+
+                <div class="card-body">
+
+                  <h4 class="card-title">Engagement Details</h4>              
+                  <div class="container px-6 mx-auto grid">
+                    <div class="download-icon" style="position: absolute; top: 0; right: 0; padding: 10px;">
+                        {% if state_filter %}
+                        <a href="{% url 'fetch_data' %}?state={{ state_filter }}" id="downloadButton">
+                        {% elif date_filter_choice  %}
+                        <a href="{% url 'fetch_data' %}?date_filter={{ date_filter_choice }}" id="downloadButton">
+                        {% elif selected_data %}
+                        <a href="{% url 'fetch_data' %}?selected_data={{ selected_data }}" id="downloadButton">
+                        {% elif product_data %}
+                        <a href="{% url 'fetch_data' %}?product_data={{ product_data }}" id="downloadButton">
+                        {% elif selected_date %}
+                        <a href="{% url 'fetch_data' %}?selected_date={{ selected_date }}" id="downloadButton">
+                        {% elif engaged_by %}
+                        <a href="{% url 'fetch_data' %}?engaged_by={{ engaged_by }}" id="downloadButton">
+                        {% else %}
+                        <a href="{% url 'fetch_data' %}" id="downloadButton">
+                        {% endif %}
+                            <!-- Font Awesome icon for Excel -->
+                        </a>
+                    </div>
+                </div>
+
+                  <div class="table-responsive">
+
+                      <table class="table table-striped">                  
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Phone No</th>
+                                <th>From</th>
+                                <th>Date of Enquiry</th>
+                                <th>Customer Confidence</th>
+                                <th>Products</th>
+                                <th>Action</th>
+                                
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in page_obj %}
+                            <tr class="clickable-row" data-target="#viewModal{{ report.id }}" data-toggle="modal" style="cursor: pointer;">
+                              <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                              <td class="py-1">{{ report.first_name }}</td>
+                              <td>{{ report.phone }}</td>
+                              <td>{{ report.state }}</td>
+                              <td>{{ report.date_of_enquiry }}</td>
+                              <td>{{ report.customer_confidence }}</td>   
+                              <td>
+                                  {% for product in report.interested_products.all %}
+                                      {{ product.product_name }}<br>
+                                  {% endfor %}
+                              </td>
+                              <td>
+                                  <button class="btn edit-button custom-button" data-toggle="modal" data-target="#editModal{{ report.id }}">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  
+                                  <button class="btn view-button custom-button" data-excustomer-id="{{ report.id }}" data-toggle="modal" data-target="#viewModal{{ report.id }}">
+                                      <i class="fas fa-eye"></i>
+                                  </button>
+                              </td>
+                          </tr>
+                            <!-- excustomer/view_excustomer.html -->
+                            <div class="modal fade" id="viewModal{{ report.id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header bg-primary text-white">
+                                          <h5 class="modal-title" id="viewModalLabel">View Customer Details</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                          </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="list-group">
+                                              <p class="list-group-item"><strong>First Name:</strong> {{ report.first_name }}</p>
+                                              <p class="list-group-item"><strong>Email:</strong> {{ report.email }}</p>
+                                              <p class="list-group-item"><strong>State:</strong> {{ report.get_state_display }}</p>
+                                              <p class="list-group-item"><strong>Phone Country Code:</strong> {{ report.phone_country_code }}</p>
+                                              <p class="list-group-item"><strong>Phone:</strong> {{ report.phone }}</p>
+                                              <p class="list-group-item"><strong>Interested Products:</strong>
+                                                  {% for product in report.interested_products.all %}
+                                                      {{ product.product_name }}{% if not forloop.last %}, {% endif %}
+                                                  {% endfor %}
+                                              </p>
+                                              <p class="list-group-item"><strong>Customer Confidence:</strong> {{ report.get_customer_confidence_display }}</p>
+                                              <p class="list-group-item"><strong>Engaged By:</strong> {{ report.engaged_by }} </p>
+                                              <p class="list-group-item"><strong>Date of Enquiry:</strong> {{ report.date_of_enquiry }}</p>
+                                              <p class="list-group-item"><strong>Company Name:</strong> {{ report.company_name }}</p>
+                                              <p class="list-group-item"><strong>Event:</strong> {{ report.event }}</p>
+                                              <p class="list-group-item"><strong>Customer Status:</strong> {{ report.customer_status }}</p>
+                                          </div>
+                                      </div>
+                                     
+                                  </div>
+                              </div>
+                          </div>
+                          
+                          
+                            <script>
+                              $(document).ready(function() {
+                                  $('.view-button').click(function () {
+                                      // Get the ID from the button's data attribute
+                                      var excustomerId = $(this).data('excustomer-id');
+                           
+                                      // Trigger the modal
+                                      $('#viewModal' + excustomerId).modal('show');
+                                  });
+                              });
+                           </script>
+                           <script>
+                            $(document).ready(function() {
+                                $('.clickable-row').click(function() {
+                                    var targetModal = $(this).data('target');
+                                    $(targetModal).modal('show');
+                                });
+                        
+                                // Optional: Close the modal when the close button inside the modal is clicked
+                                $('.modal .close').click(function() {
+                                    $(this).closest('.modal').modal('hide');
+                                });
+                            });
+                        </script>
+
+                            <div class="modal fade" id="editModal{{ report.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                      <h5 class="modal-title" id="editModalLabel">Edit Customer Details</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                          </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <form method="post" action="{% url 'edit_excustomer' report.id %}" id="editForm{{ report.id }}">
+                                              {% csrf_token %}
+                                             
+                                              <div class="row">
+                                                  <div class="col-md-6">
+                                                    {% if form.non_field_errors %}
+                                                        <div class="alert alert-danger">
+                                                            <strong>Error:</strong> Please fill below details:
+                                                            {% for error in form.non_field_errors %}
+                                                                {{ error|escape }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                      <!-- Left column -->
+                                                      <div class="form-group">
+                                                          <label for="first_name">First Name:</label>
+                                                          <input type="text" id="first_name" name="first_name" class="form-control" value="{{ report.first_name }}">
+                                                      </div>
+                                                      <div class="form-group">
+                                                          <label for="email">Email:</label>
+                                                          <input type="email" id="email" name="email" class="form-control" value="{{ report.email }}">
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="state">State:</label>
+                                                        <select id="state" name="state" class="form-control">
+                                                            {% for choice in report.STATE_CHOICES %}
+                                                                <option value="{{ choice.0 }}" {% if choice.0 == report.state %}selected{% endif %}>
+                                                                    {{ choice.1 }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                      <label for="phone_country_code">Phone:</label>
+                                                      <div class="input-group">
+                                                          <div class="input-group-prepend">
+                                                              <select id="phone_country_code" name="phone_country_code" class="custom-select">
+                                                                  {% for choice in report.COUNTRY_CODE_CHOICES %}
+                                                                      <option value="{{ choice.0 }}" {% if choice.0 == report.phone_country_code %}selected{% endif %}>
+                                                                          {{ choice.1 }}
+                                                                      </option>
+                                                                  {% endfor %}
+                                                              </select>
+                                                          </div>
+                                                          <input type="text" id="phone" style="height: 38px;" name="phone" class="form-control" value="{{ report.phone }}">
+                                                      </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="interested_products">Interested Products:</label>
+                                                    <div>
+                                                        {% for product in products %}
+                                                            <label class="checkbox-label">
+                                                                <input type="checkbox" name="interested_products" value="{{ product.id }}"
+                                                                    {% if product in report.interested_products.all %} checked {% endif %}>
+                                                                {{ product.product_name }}
+                                                            </label>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                
+                                                      <!-- Add more fields to the left column as needed -->
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                      <!-- Right column -->
+                                                      <div class="form-group">
+                                                          <label for="customer_confidence">Customer Confidence:</label>
+                                                          <select id="customer_confidence" name="customer_confidence" class="form-control">
+                                                              {% for choice in report.CUSTOMER_CONFIDENCE_CHOICES %}
+                                                                  <option value="{{ choice.0 }}" {% if choice.0 == report.customer_confidence %}selected{% endif %}>
+                                                                      {{ choice.1 }}
+                                                                  </option>
+                                                              {% endfor %}
+                                                          </select>
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="engaged_by">Engaged By:</label>
+                                                        <select id="engaged_by" name="engaged_by" class="form-control">
+                                                          <option value="" {% if not report.engaged_by %}selected{% endif %}>Select an Employee</option>
+                                                          {% for employee in employees %}
+                                                              <option value="{{ employee.id }}" {% if report.engaged_by_id == employee.id %}selected{% endif %}>
+                                                                  {{ employee.employee_name }}
+                                                              </option>
+                                                          {% endfor %}
+                                                      </select>
+                                                      
+                                                      
+                                                      
+                                                    </div>
+                                                    
+                                                    
+                                                      <div class="form-group">
+                                                          <label for="company_name">Company Name:</label>
+                                                          <input type="text" id="company_name" name="company_name" class="form-control" value="{{ report.company_name }}">
+                                                      </div>
+                                                      
+                                                      <div class="form-group">
+                                                        <label for="event">Event:</label>
+                                                        <select id="event" name="event" class="form-control">
+                                                          <option value="" {% if not report.event %}selected{% endif %}>Select an Event</option>
+                                                          {% for event in events %}
+                                                              <option value="{{ event.id }}" {% if report.event_id == event.id %}selected{% endif %}>
+                                                                  {{ event.ename }}
+                                                              </option>
+                                                          {% endfor %}
+                                                      </select>
+                                                      
+                                                    </div>
+                                                    
+                                                      <div class="form-group">
+                                                          <label for="customer_status">Customer Status:</label>
+                                                          <input type="text" id="customer_status" name="customer_status" class="form-control" value="{{ report.customer_status }}">
+                                                      </div>
+                                                      <!-- Add more fields to the right column as needed -->
+                                                  </div>
+                                              </div>
+                                              <!-- Add this code to display form validation error messages -->
+<!-- Add this code to display form validation error messages -->
+<!-- Add this code to display form validation error messages -->
+
+                                              <button type="button" class="btn btn-primary" onclick="submitForm('{{ report.id }}')">Save</button>                                             
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>                                    
+                            {% endfor %}
+                            <script>
+                             
+                              function submitForm(reportId) {
+                                var form = document.getElementById("editForm" + reportId);
+                                var formData = new FormData(form);
+                            
+                                $.ajax({
+                                  type: "POST",
+                                  url: form.action,
+                                  data: formData,
+                                  processData: false,
+                                  contentType: false,
+                                  // Inside the success function of the AJAX request
+                                  success: function (data) {
+                                    if (data.success) {
+                                        window.location.href = "{% url 'reports_excust' %}";
+                                    } else {
+                                        // If failed, handle errors in the form modal
+                                        var errorData = JSON.parse(data.errors);
+                                        var errorHTML = "<div class='alert alert-danger'><strong>Error:</strong>";
+  
+                                        for (var key in errorData) {
+                                            errorHTML += "<p>" + key + ": " + errorData[key][0].message + "</p>";
+                                        }
+  
+                                        errorHTML += "</div>";
+  
+                                        $('#editModal' + reportId + ' .modal-body .alert-danger').remove();
+                                        $('#editModal' + reportId + ' .modal-body').prepend(errorHTML);
+                                    }
+                                  },
+  
+                                  error: function (xhr, textStatus, errorThrown) {
+                                    // Handle other errors, if any
+                                  }
+                                });
+                              }
+                            
+  
+                            </script>
+                        </tbody>
+                    </table>
+                  <!-- Add this HTML code at the bottom of your template -->
+
+                    <!-- Pagination Controls -->
+                    <!-- Pagination Controls - Customized for Right Alignment -->
+                    <div class="pagination-container">
+                      <div class="pagination">
+                        <span class="step-links">
+                          {% if page_obj.has_previous %}
+                            <a href="?page=1
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-left"></i>
+                            </a>
+                          {% endif %}
+                    
+                          <span class="current-page">{{ page_obj.number }}</span>
+                    
+                          {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-right"></i>
+                            </a>
+                          {% endif %}
+                        </span>
+                      </div>
+                    </div>
+                  
+                    <span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} Pages</span>
+                  </div>
+
+                </div>
+
+              </div>          
+            </div>
+          </div>
+        </div>
+     
+        
+
+{% endblock %}       

@@ -1,0 +1,339 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+ 
+
+<head>
+
+  <!-- Required meta tags -->
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Strings Infinity</title>
+
+  <!-- plugins:css -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+
+  <!-- endinject -->
+
+  <!-- Plugin css for this page -->
+
+  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}">
+
+  <!-- End plugin css for this page -->
+
+  <!-- inject:css -->
+
+  <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
+
+  <!-- endinject -->
+
+  <link rel="shortcut icon" href="{% static 'images/logo-mini1.jpg' %}" />
+
+
+</head>
+
+<body>
+
+  <div class="container-scroller">
+
+    <!-- partial:partials/_navbar.html -->
+
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+
+        <a class="navbar-brand brand-logo mr-5" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini.png' %}" class="mr-2" alt="logo"/></a>
+
+        <a class="navbar-brand brand-logo-mini" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini1.jpg' %}" alt="logo"/></a>
+
+      </div>
+
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+
+          <span class="icon-menu"></span>
+
+        </button>
+
+    
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+
+              <img src="{% static 'images/faces/user.svg' %}" alt="profile"/>
+
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a href="{% url 'show_profile' %}" class="dropdown-item">
+
+                <i class="ti-user text-primary"></i>
+
+                Profile
+
+              </a>
+
+              <a href="{% url 'logout' %}" class="dropdown-item">
+
+                <i class="ti-power-off text-primary"></i>
+
+                Logout
+
+              </a>
+
+            </div>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="icon-menu"></span>
+            </button>
+
+          </li>          
+
+        </ul>
+
+      </div>
+
+    </nav>
+
+    <!-- partial -->
+
+    <div class="container-fluid page-body-wrapper">
+
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
+        <ul class="nav">
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'index1' %}">
+
+              <i class="icon-grid menu-icon"></i>
+
+              <span class="menu-title">Dashboard</span>
+
+            </a>
+
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#reports" aria-expanded="false" aria-controls="auth">
+              <i class="icon-paper menu-icon"></i>
+              <span class="menu-title">Reports</span>
+              <i class="menu-arrow"></i>
+            </a>
+
+            <div class="collapse" id="reports">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'manageforms' %}"> All </a></li>
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'reports_excust' %}"> Ex Customer Report </a></li>              
+              </ul>
+            </div>
+
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#manage" aria-expanded="false" aria-controls="auth">
+              <i class="icon-layout menu-icon"></i>
+              <span class="menu-title">Manage</span>
+              <i class="menu-arrow"></i>
+            </a>
+
+            <div class="collapse" id="manage">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'mainform'  %}"> Form </a></li>
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'exform' %}"> Ex Customer Form </a></li>
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'product_list' %}"> Products </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'employee_list' %}"> Team </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'product_lists' %}"> Product Mailers </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'brand' %}"> Brand Mailers  </a></li>              </ul>
+            </div>
+
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#vendor" aria-expanded="false" aria-controls="auth">
+              <i class="mdi mdi-account" style="font-size: 22px;"></i>
+              <span class="menu-title" style="margin-left:10px;">Vendors</span>
+              
+              <i class="menu-arrow"></i>
+            </a>
+
+            <div class="collapse" id="vendor">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'forms' username=request.user.username %}"> Vendor Form </a></li>
+                <li class="nav-item"> <a class="nav-link"  href="{% url 'vendor' %}"> Dashboard </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'department' %}"> Departments </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'reports' %}"> Reports </a></li>
+              </ul>
+            </div>
+
+          </li>
+           <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#event" aria-expanded="false" aria-controls="auth">
+              <i class="icon-columns menu-icon"></i>
+              <span class="menu-title">Event</span>
+              <i class="menu-arrow"></i>
+            </a>
+
+            <div class="collapse" id="event">
+              <ul class="nav flex-column sub-menu">
+               
+                <li class="nav-item"> <a class="nav-link" href="{% url 'Create_event' %}"> Create Event </a></li>
+              </ul>
+            </div>
+
+          </li>
+
+        </ul>
+
+      </nav>
+
+      <!-- partial -->
+      
+      {% block content %}
+
+      {% endblock %}
+
+                              
+    <!-- container-scroller -->
+    <footer class="footer">
+
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023.  <a href="https://stringsinfinity.com//" target="_blank">Strings Infinity</a> All rights reserved.</span>
+      </div>
+
+    </footer>
+
+    <!-- plugins:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+    <script src="{% static 'js/dataTables.select.min.js' %}"></script>
+  
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/settings.js' %}"></script>
+    <script src="{% static 'js/todolist.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
+    <!-- End custom js for this page-->
+
+
+     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Function to fetch notifications
+    function fetchNotifications() {
+        $.ajax({
+            url: '{% url "get_unread_notifications" %}',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                const notificationList = $("#notification-list");
+                notificationList.empty();
+
+                let notificationCount = 0; // Track the count of notifications
+
+                data.notifications.forEach(function (notification) {
+                    if (notificationCount < 10) {
+                        const notificationItem = `
+                            <a class="dropdown-item preview-item">
+                                <div class="preview-thumbnail">
+                                    <div class="preview-icon bg-success">
+                                        <i class="ti-info-alt mx-0"></i>
+                                    </div>
+                                </div>
+                                ${notification.message}
+                            </a>`;
+                        notificationList.append(notificationItem);
+                        notificationCount++;
+                    }
+                });
+
+                // Update the notification count display
+                $("#notification-count").text(notificationCount);
+            }
+        });
+    }
+
+  // Function to clear notifications
+  function clearNotifications() {
+        // Display a confirmation dialog
+        if (confirm('Are you sure you want to clear all notifications?')) {
+            $.ajax({
+                url: '{% url "clear_notifications" %}',
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    // Check for the success message and display it in a custom popup
+                    if (data.message === 'Notifications cleared successfully') {
+                        // Create a custom popup with the success message
+                        const popup = document.createElement('div');
+                        popup.innerHTML = `
+                            <div class="custom-popup">
+                                <div class="popup-content">
+                                    <p>${data.message}</p>
+                                    <button id="close-popup">Close</button>
+                                </div>
+                            </div>
+                        `;
+
+                        // Add the popup to the body
+                        document.body.appendChild(popup);
+
+                        // Add event listener to close the popup when the "Close" button is clicked
+                        document.getElementById('close-popup').addEventListener('click', function () {
+                            document.body.removeChild(popup);
+                        });
+
+                        // Clear the notification list
+                        $("#notification-list").empty();
+
+                        // Reset the notification count
+                        $("#notification-count").text("0");
+                    }
+                }
+            });
+        }
+    }
+
+    // Call fetchNotifications periodically (e.g., every 5 seconds)
+    setInterval(fetchNotifications, 1000);
+
+    // Handle click event for the "Clear All" button
+    $("#clear-all-button").click(function (event) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+        clearNotifications(); // Call the clearNotifications function
+    });
+</script>
+  </body>
+  
+  </html>
+  
+  

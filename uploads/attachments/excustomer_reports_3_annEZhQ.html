@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <!-- Add this to your template's head section -->
+
+  <style>
+  
+    /* Customized Pagination Styles */
+.pagination-container {
+    text-align: right; /* Align pagination to the right */
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.step-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step-links a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    margin: 2px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.step-links a:hover {
+    background-color: #f5f5f5;
+}
+
+.current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+.custom-button {
+        /* Add your custom styles here */
+        color: #8a8787; /* Text color */
+        padding: 5px 10px; /* Padding */
+        /* Add any other styles you want */
+    }
+</style>
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+
+
+      <!-- partial -->
+
+      <div class="main-panel">
+
+        <div class="content-wrapper">
+
+          <div class="row">
+
+            <div class="col-md-12 grid-margin">
+
+              <div class="row">                
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          {% if messages %}
+          {% for message in messages %}
+            {% if message.tags == 'success' %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert" id="successMessage">
+            {% elif message.tags == 'error' %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorMessage">
+            {% else %}
+              <div class="alert alert-info alert-dismissible fade show" role="alert" id="infoMessage">
+            {% endif %}
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+          {% endfor %}
+        {% endif %}
+        
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var successMessage = document.getElementById('successMessage');
+            var errorMessage = document.getElementById('errorMessage');
+            var infoMessage = document.getElementById('infoMessage');
+        
+            if (successMessage) {
+              successMessage.addEventListener('click', function() {
+                location.reload(true);
+              });
+            }
+        
+            if (errorMessage) {
+              errorMessage.addEventListener('click', function() {
+                location.reload(true);
+              });
+            }
+        
+            if (infoMessage) {
+              infoMessage.addEventListener('click', function() {
+                location.reload(true);
+              });
+            }
+          });
+        </script>
+                
+      
+          <div class="row mt-3">
+            <div class="col-lg-12 grid-margin stretch-card">            
+
+              <div class="card">
+
+                <div class="card-body">
+
+                  <h4 class="card-title">Engagement Details</h4>              
+                  <div class="container px-6 mx-auto grid">
+                    <div class="download-icon" style="position: absolute; top: 0; right: 0; padding: 10px;">
+                        {% if state_filter %}
+                        <a href="{% url 'fetch_data' %}?state={{ state_filter }}" id="downloadButton">
+                        {% elif date_filter_choice  %}
+                        <a href="{% url 'fetch_data' %}?date_filter={{ date_filter_choice }}" id="downloadButton">
+                        {% elif selected_data %}
+                        <a href="{% url 'fetch_data' %}?selected_data={{ selected_data }}" id="downloadButton">
+                        {% elif product_data %}
+                        <a href="{% url 'fetch_data' %}?product_data={{ product_data }}" id="downloadButton">
+                        {% elif selected_date %}
+                        <a href="{% url 'fetch_data' %}?selected_date={{ selected_date }}" id="downloadButton">
+                        {% elif engaged_by %}
+                        <a href="{% url 'fetch_data' %}?engaged_by={{ engaged_by }}" id="downloadButton">
+                        {% else %}
+                        <a href="{% url 'fetch_data' %}" id="downloadButton">
+                        {% endif %}
+                            <!-- Font Awesome icon for Excel -->
+                        </a>
+                        <img src="{% static 'images/compose.png' %}" alt="Compose" style="height: 30px; width: 30px;" data-toggle="modal" data-target="#composeModal">
+
+                    </div>
+                </div>
+
+                  <div class="table-responsive">
+
+                      <table class="table table-striped">                  
+                        <thead>
+                            <tr>
+                              <th><input type="checkbox" id="selectAllBtn" ></th>
+
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Phone No</th>
+                                <th>Email</th>
+                                <th>Date of Enquiry</th>
+                                <th>Customer Confidence</th>
+                                <th>Action</th>
+                                
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in page_obj %}
+                            <tr class="selectable-row" data-excustomer-id="{{ report.id }}">
+                              <td><input type="checkbox" class="row-checkbox" name="selected_contacts" value="{{ contact.id }}"></td>
+
+                                <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                                <td class="py-1">{{ report.first_name }}</td>
+                                <td>{{ report.phone }}</td>
+                                <td>{{ report.email }}</td>
+                                <td>{{ report.date_of_enquiry }}</td>
+                                <td>{{ report.customer_confidence }}</td>   
+                               
+                              <td>
+                                <button class="btn edit-button custom-button" data-toggle="modal" data-target="#editModal{{ report.id }}" onclick="editButtonClick(event)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                               
+                                <button class="btn view-button custom-button" data-excustomer-id="{{ report.id }}" data-toggle="modal" data-target="#viewModal{{ report.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                               <!-- Add this script to your template -->
+                            </tr>
+                            <!-- Your JavaScript -->
+                            <script>
+                              $(document).ready(function () {
+                                // Initialize modals
+                                $('#viewModal{{ report.id }}').modal();
+                                $('#editModal{{ report.id }}').modal();
+                              });
+                            </script>
+                            
+           <!-- excustomer/view_excustomer.html -->
+                            <div class="modal fade" id="viewModal{{ report.id }}" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header bg-primary text-white">
+                                          <h5 class="modal-title" id="viewModalLabel">View Customer Details</h5>
+                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bs-dismiss="modal">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                          
+                                      </div>
+                                      <div class="modal-body">
+                                          <div class="list-group">
+                                              <p class="list-group-item"><strong>First Name:</strong> {{ report.first_name }}</p>
+                                              <p class="list-group-item"><strong>Email:</strong> {{ report.email }}</p>
+                                              <p class="list-group-item"><strong>State:</strong> {{ report.get_state_display }}</p>
+                                              <p class="list-group-item"><strong>Phone Country Code:</strong> {{ report.phone_country_code }}</p>
+                                              <p class="list-group-item"><strong>Phone:</strong> <a href="tel:{{ report.phone }}">{{ report.phone }}</a></p>
+                                              <p class="list-group-item"><strong>Interested Products:</strong>
+                                                  {% for product in report.interested_products.all %}
+                                                      {{ product.product_name }}{% if not forloop.last %}, {% endif %}
+                                                  {% endfor %}
+                                              </p>
+                                              <p class="list-group-item"><strong>Customer Confidence:</strong> {{ report.get_customer_confidence_display }}</p>
+                                              <p class="list-group-item"><strong>Engaged By:</strong> {{ report.engaged_by }} </p>
+                                              <p class="list-group-item"><strong>Date of Enquiry:</strong> {{ report.date_of_enquiry }}</p>
+                                              <p class="list-group-item"><strong>Company Name:</strong> {{ report.company_name }}</p>
+                                              <p class="list-group-item"><strong>Event:</strong> {{ report.event }}</p>
+                                              <p class="list-group-item"><strong>Customer Status:</strong> {{ report.customer_status }}</p>
+                                          </div>
+                                      </div>
+                                     
+                                  </div>
+                              </div>
+                          </div>
+                            <div class="modal fade" id="editModal{{ report.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="editModalLabel">Edit Customer Details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-bs-dismiss="modal">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        
+                                      </div>
+                                      <div class="modal-body">
+                                          <form method="post" action="{% url 'edit_excustomer' report.id %}" id="editForm{{ report.id }}">
+                                              {% csrf_token %}
+                                             
+                                              <div class="row">
+                                                  <div class="col-md-6">
+                                                    {% if form.non_field_errors %}
+                                                        <div class="alert alert-danger">
+                                                            <strong>Error:</strong> Please fill below details:
+                                                            {% for error in form.non_field_errors %}
+                                                                {{ error|escape }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                      <!-- Left column -->
+                                                      <div class="form-group">
+                                                          <label for="first_name">First Name:</label>
+                                                          <input type="text" id="first_name" name="first_name" class="form-control" value="{{ report.first_name }}">
+                                                      </div>
+                                                      <div class="form-group">
+                                                          <label for="email">Email:</label>
+                                                          <input type="email" id="email" name="email" class="form-control" value="{{ report.email }}">
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="state">State:</label>
+                                                        <select id="state" name="state" class="form-control">
+                                                            {% for choice in report.STATE_CHOICES %}
+                                                                <option value="{{ choice.0 }}" {% if choice.0 == report.state %}selected{% endif %}>
+                                                                    {{ choice.1 }}
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                      <label for="phone_country_code">Phone:</label>
+                                                      <div class="input-group">
+                                                          <div class="input-group-prepend">
+                                                              <select id="phone_country_code" name="phone_country_code" class="custom-select">
+                                                                  {% for choice in report.COUNTRY_CODE_CHOICES %}
+                                                                      <option value="{{ choice.0 }}" {% if choice.0 == report.phone_country_code %}selected{% endif %}>
+                                                                          {{ choice.1 }}
+                                                                      </option>
+                                                                  {% endfor %}
+                                                              </select>
+                                                          </div>
+                                                          <input type="text" id="phone" style="height: 38px;" name="phone" class="form-control" value="{{ report.phone }}">
+                                                      </div>
+                                                  </div>
+                                                  <div class="form-group">
+                                                    <label for="interested_products">Interested Products:</label>
+                                                    <div>
+                                                        {% for product in products %}
+                                                            <label class="checkbox-label">
+                                                                <input type="checkbox" name="interested_products" value="{{ product.id }}"
+                                                                    {% if product in report.interested_products.all %} checked {% endif %}>
+                                                                {{ product.product_name }}
+                                                            </label>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                
+                                                      <!-- Add more fields to the left column as needed -->
+                                                  </div>
+                                                  <div class="col-md-6">
+                                                      <!-- Right column -->
+                                                      <div class="form-group">
+                                                          <label for="customer_confidence">Customer Confidence:</label>
+                                                          <select id="customer_confidence" name="customer_confidence" class="form-control">
+                                                              {% for choice in report.CUSTOMER_CONFIDENCE_CHOICES %}
+                                                                  <option value="{{ choice.0 }}" {% if choice.0 == report.customer_confidence %}selected{% endif %}>
+                                                                      {{ choice.1 }}
+                                                                  </option>
+                                                              {% endfor %}
+                                                          </select>
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="engaged_by">Engaged By:</label>
+                                                        <select id="engaged_by" name="engaged_by" class="form-control">
+                                                          <option value="" {% if not report.engaged_by %}selected{% endif %}>Select an Employee</option>
+                                                          {% for employee in employees %}
+                                                              <option value="{{ employee.id }}" {% if report.engaged_by_id == employee.id %}selected{% endif %}>
+                                                                  {{ employee.employee_name }}
+                                                              </option>
+                                                          {% endfor %}
+                                                      </select>
+                                                      
+                                                      
+                                                      
+                                                    </div>
+                                                    
+                                                    
+                                                      <div class="form-group">
+                                                          <label for="company_name">Company Name:</label>
+                                                          <input type="text" id="company_name" name="company_name" class="form-control" value="{{ report.company_name }}">
+                                                      </div>
+                                                      
+                                                      <div class="form-group">
+                                                        <label for="event">Event:</label>
+                                                        <select id="event" name="event" class="form-control">
+                                                          <option value="" {% if not report.event %}selected{% endif %}>Select an Event</option>
+                                                          {% for event in events %}
+                                                              <option value="{{ event.id }}" {% if report.event_id == event.id %}selected{% endif %}>
+                                                                  {{ event.ename }}
+                                                              </option>
+                                                          {% endfor %}
+                                                      </select>
+                                                      
+                                                    </div>
+                                                    
+                                                      <div class="form-group">
+                                                          <label for="customer_status">Customer Status:</label>
+                                                          <input type="text" id="customer_status" name="customer_status" class="form-control" value="{{ report.customer_status }}">
+                                                      </div>
+                                                      <!-- Add more fields to the right column as needed -->
+                                                  </div>
+                                              </div>
+                                              <!-- Add this code to display form validation error messages -->
+
+                                              <button type="button" class="btn btn-primary" onclick="submitForm('{{ report.id }}')">Save</button>                                             
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>                                    
+                            {% endfor %}
+                          </tbody>
+                        </table>
+   
+                  <!-- Add this HTML code at the bottom of your template -->
+
+                    <!-- Pagination Controls - Customized for Right Alignment -->
+                    <div class="pagination-container">
+                      <div class="pagination">
+                        <span class="step-links">
+                          {% if page_obj.has_previous %}
+                            <a href="?page=1
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-left"></i>
+                            </a>
+                          {% endif %}
+                    
+                          <span class="current-page">{{ page_obj.number }}</span>
+                    
+                          {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}
+                              {% if state_filter %}&state={{ state_filter }}{% endif %}
+                              {% if date_filter_choice %}&date_filter={{ date_filter_choice }}{% endif %}
+                              {% if selected_data %}&selected_data={{ selected_data }}{% endif %}
+                              {% if product_data %}&product_data={{ product_data }}{% endif %}
+                              {% if selected_date %}&selected_date={{ selected_date }}{% endif %}
+                              {% if engaged_by %}&engaged_by={{ engaged_by }}{% endif %}
+                            ">
+                              <i class="fas fa-angle-double-right"></i>
+                            </a>
+                          {% endif %}
+                        </span>
+                      </div>
+                    </div>
+                  
+                    <span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} Pages</span>
+                  </div>
+
+                </div>
+
+              </div>          
+            </div>
+            <div class="modal fade" id="composeModal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="composeModalLabel">Compose Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Use the compose_form instead of existing_message to populate form fields -->
+                    <form method="post" action="{% url 'excustomer_compose_message' %}" enctype="multipart/form-data" id="composeForm">
+                      {% csrf_token %}
+                      <div class="form-group">
+                          <label for="subject">Subject</label>
+                          <input type="text" class="form-control" id="subject" name="subject" value="">
+                      </div>
+                      <div class="form-group">
+                          <label for="message">Message</label>
+                          <textarea class="form-control" id="message" rows="3" name="message"></textarea>
+                      </div>
+                      <input type="hidden" id="selectedEmails" name="selectedEmails" value="">
+                  
+                      <div class="form-group">
+                          <label for="attachments">Attachments</label>
+                          <!-- Input for new attachments -->
+                          <input type="file" class="form-control-file" id="attachments" name="attachments" multiple>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-6">
+                          </div>
+                          <div class="col-md-6 text-right">
+                              <button type="submit" class="btn btn-primary" id="sendButton">Mail Send</button>
+                          </div>
+                      </div>
+                      
+                  </form>
+                  
+                  </div>
+                
+                <div class="modal-footer">
+                    <!-- Add your success message alert here -->
+                    <!-- Add this where you want to display messages -->
+                 
+                </div>
+              </div>
+            </div>
+            
+            
+            
+            
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script>
+              $(document).ready(function () {
+                // Select All button click event
+                $("#selectAllBtn").click(function () {
+                  // Check or uncheck all checkboxes based on the state of the "Select All" checkbox
+                  var isChecked = $("#selectAllBtn").prop("checked");
+                  $(".row-checkbox").prop("checked", isChecked);
+                  updateSelectedEmails();
+                });
+            
+                // Checkbox click event
+                $(".row-checkbox").click(function () {
+                  updateSelectedEmails();
+                });
+            
+                // "Mail Send" button click event
+                $("#sendButton").click(function () {
+                  updateSelectedEmails();
+                  // Trigger the form submission
+                  $("#composeForm").submit();
+                });
+            
+                // Function to update the selected emails in the hidden input
+                function updateSelectedEmails() {
+                  var selectedEmails = [];
+                  $(".row-checkbox:checked").each(function () {
+                    var row = $(this).closest("tr");
+                    var email = row.find("td:eq(4)").text(); // Assuming email is in the 5th column (index 4)
+                    selectedEmails.push(email);
+                  });
+                  $("#selectedEmails").val(selectedEmails.join(','));
+                }
+              });
+            </script>
+     
+            <script>
+              function submitForm(reportId) {
+                var form = document.getElementById("editForm" + reportId);
+                var formData = new FormData(form);
+            
+                $.ajax({
+                  type: "POST",
+                  url: form.action,
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  // Inside the success function of the AJAX request
+                  success: function (data) {
+                    if (data.success) {
+                        window.location.href = "{% url 'reports_excust' %}";
+                    } else {
+                        // If failed, handle errors in the form modal
+                        var errorData = JSON.parse(data.errors);
+                        var errorHTML = "<div class='alert alert-danger'><strong>Error:</strong>";
+
+                        for (var key in errorData) {
+                            errorHTML += "<p>" + key + ": " + errorData[key][0].message + "</p>";
+                        }
+
+                        errorHTML += "</div>";
+
+                        $('#editModal' + reportId + ' .modal-body .alert-danger').remove();
+                        $('#editModal' + reportId + ' .modal-body').prepend(errorHTML);
+                    }
+                  },
+
+                  error: function (xhr, textStatus, errorThrown) {
+                    // Handle other errors, if any
+                  }
+                });
+              }
+            </script>
+            
+            <script> 
+              $(document).ready(function () {
+                // Handle click on the table rows with the class 'selectable-row'
+                $('.selectable-row').click(function (event) {
+                    // Check if the click is on the 'edit' button
+                    if (!$(event.target).hasClass('edit-button')) {
+                        // Get the customer ID from the data attribute or other relevant attribute
+                        var customerId = $(this).data('excustomer-id');
+            
+                        // Trigger the modal with the specific ID based on the customer ID
+                       
+            
+                        // Here, use AJAX or other techniques to populate the modal content based on the clicked customer ID
+                        // Example: Fetch data for this customer using AJAX and populate the modal content
+                    }
+                });
+            
+                // Handle click on the edit buttons
+                $('.edit-button').click(function (event) {
+                    event.stopPropagation(); // Prevent click event from propagating to the parent row
+            
+                    // Get the customer ID from the button's data attribute
+                    var customerId = $(this).closest('.selectable-row').data('excustomer-id');
+            
+                    // Close the view modal if it's open
+                    $('#viewModal' + customerId).modal('hide');
+            
+                    // Trigger the edit modal with the specific ID based on the customer ID
+                    $('#editModal' + customerId).modal('show');
+            
+                    // Here, you can handle opening the edit modal or any other actions
+                });
+            
+                // Your other code...
+            });
+            
+            </script>
+            
+{% endblock %}       

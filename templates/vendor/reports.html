@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <style>
+    /* Customized Pagination Styles */
+.pagination-container {
+    text-align: right; /* Align pagination to the right */
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.step-links {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.step-links a {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    margin: 2px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.step-links a:hover {
+    background-color: #f5f5f5;
+}
+
+.current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+</style>
+
+</head>
+
+
+      <!-- partial -->
+
+      <div class="main-panel">
+
+        <div class="content-wrapper">
+
+          <div class="row">
+
+            <div class="col-md-12 grid-margin">
+
+              <div class="row">                
+
+              </div>
+
+            </div>
+
+          </div>   
+          <div class="row justify-content-end">
+          <div class="col-md-6">  
+            <label for="department_filter">Filter by Department:</label>
+            <select id="department_filter" name="department_filter">
+                <option value="">All Departments</option>
+                {% for department in department_options %}
+                    <option value="{{ department.dname }}">{{ department.dname }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary ml-2" onclick="applyFilter()">Apply Filter</button>
+          </div>
+          </div>                  
+          
+          <div class="row mt-3">
+          <div class="col-lg-12 grid-margin stretch-card">  
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Engagement Details</h4>              
+                <div class="container px-6 mx-auto grid">
+                  <!-- Add a dropdown select for the Department filter -->
+
+                  
+                  <!-- Modify the Excel download button to include the Department filter -->
+                  <div class="download-icon" style="position: absolute; top: 0; right: 0; padding: 10px;">
+                    {% if state_filter %}
+                      <a href="{% url 'fetch' %}?state={{ state_filter }}&department_filter={{ department_filter }}" id="downloadButton">
+                    {% else %}
+                        <a href="{% url 'fetch' %}?department={{ department_filter }}" id="downloadButton">
+                    {% endif %}
+                    <img src="{% static 'assets/img/excel.png' %}" alt="" style="height: 30px; width: 30px;">
+                    <!-- Font Awesome icon for Excel -->
+                    </a>
+                  </div>
+                  
+                <div class="table-responsive">
+
+                  <table class="table table-striped">                  
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Comapny Name</th>
+                            <th>Location</th>
+                            <th>Phone No</th>
+                            <th>Email</th>
+                            <th>Product Name</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vendors in page_obj %}
+                        <tr>
+                            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+                            <td class="py-1">{{ vendors.first_name }}</td>
+                            <td>{{ vendors.company_name }}</td>
+                            <td>{{ vendors.state }}</td>
+                            <td>{{ vendors.phone }}</td>
+                            <td>{{ vendors.email }}</td>
+                            <td>{{ vendors.product_name }}</td>
+                            <td>{{ vendors.department }}</td>           
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <!-- Pagination Controls -->
+                <!-- Pagination Controls - Customized for Right Alignment -->
+                <div class="pagination-container">
+                  <div class="pagination">
+                    <span class="step-links">
+                      {% if page_obj.has_previous %}
+                        <a href="?page=1
+                          {% if state_filter %}&state={{ state_filter }}{% endif %}
+                        ">
+                          <i class="fas fa-angle-double-left"></i>
+                        </a>
+                        <a href="?page={{ page_obj.previous_page_number }}
+                          {% if state_filter %}&state={{ state_filter }}{% endif %}
+                        ">
+                          <i class="fas fa-angle-left"></i>
+                        </a>
+                      {% endif %}
+                
+                      <span class="current-page">{{ page_obj.number }}</span>
+                
+                      {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}
+                          {% if state_filter %}&state={{ state_filter }}{% endif %}
+                        ">
+                          <i class="fas fa-angle-right"></i>
+                        </a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}
+                          {% if state_filter %}&state={{ state_filter }}{% endif %}
+                        ">
+                          <i class="fas fa-angle-double-right"></i>
+                        </a>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                
+<span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }} Pages</span>
+</div>
+
+</div>
+<script>
+
+  function applyFilter() {
+
+      var departmentFilter = document.getElementById("department_filter").value;
+
+      var queryParams = new URLSearchParams(window.location.search);
+
+      queryParams.set("department_filter", departmentFilter);
+
+      window.location.href = window.location.pathname + "?" + queryParams.toString();
+
+  }
+
+</script>
+</div>          
+</div>
+</div>
+{% endblock %}       

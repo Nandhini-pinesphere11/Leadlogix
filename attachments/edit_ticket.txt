@@ -1,0 +1,150 @@
+Storeperson_alltickets.html
+*************************************************************                                                
+                                                
+                                                <div class="mb-3">
+                                                    <label for="fileUpload" id="fileUploadLabel" class="form-label">Attachments</label>
+
+                                                    <input type="file" class="form-control" id="fileInput" name="fileUpload[]" multiple onchange="validateFileSelection(event)">
+                                                    <div class="text-danger" id="unsupportedFileError" style="display: none;">Unsupported file type. Please select a valid file.</div>
+                                                </div>
+                                                <ul class="scrollable-section" style="width:auto">
+                                                <ul id="selectedFilesList">
+                                                    <!-- Display selected files -->
+                                                    <!-- Use JavaScript to dynamically add selected files here -->
+                                                </ul>
+                                                {% if ticket.uploads.exists %}
+                                                <ul id="uploadedFilesList">
+                                                    {% for file_upload in ticket.uploads.all %}
+                                                    <li data-attachment-id="{{ file_upload.id }}">
+                                                        <a href="{{ file_upload.file.url }}" data-url="{{ file_upload.file.url }}" class="attachment-link">
+                                                            <span>{{ file_upload.file.name }}</span>
+                                                        </a>
+                                    
+                                                        <a href="#" class="remove-button" onclick="removeAttachment({{ file_upload.id }})">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                        
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <p>No files uploaded.</p>
+                                                {% endif %}
+                                                </ul>
+                                                <div class="invalid-feedback">
+                                                    Please select one or more files with supported extensions (jpg, jpeg, png, pdf, pptx, xlsx, mp3, mp4, xls).
+                                                </div>
+                                                <div id="unsupportedFileError" class="text-danger" style="display: none;">
+                                                    Unsupported file type. Please select a valid file.
+                                                </div>
+
+                                                <!-- Hidden input field to store file names -->
+														<input type="hidden" id="uploadedFiles" name="uploadedFiles" value="">
+														
+														<!-- Display selected file names as clickable links with a remove option -->
+														<div class="mb-3 row">
+															<label class="col-lg-3 col-form-label" for="validationCustom06"></label>
+															<div class="col-lg-9">
+                                                               
+															</div>
+														</div>
+                           </div>
+ =================================================================================================================================================================================
+ 
+ views.py
+ ***************
+ 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required()
+@allowed_users(allowed_roles=['StorePerson'])
+def edit_ticket(request, ticket_id):
+    ticket = None
+    if request.method == 'POST':
+        # Get the ticket instance to edit
+        ticket = get_object_or_404(Item, id=ticket_id)
+
+        # Retrieve the fields from the form
+        category_id = request.POST.get('category')
+        subcategory_id = request.POST.get('subcategory')
+
+        # Retrieve the Category and Subcategory instances based on their IDs
+        category = get_object_or_404(Category, id=category_id)
+        subcategory = get_object_or_404(Subcategory, id=subcategory_id)
+
+        # Assign the retrieved instances to the ticket's category and subcategory fields
+        ticket.category = category
+        ticket.subcategory = subcategory
+
+        # Update other fields as needed
+        ticket.description = request.POST.get('description')
+
+        # Handle file uploads
+        uploaded_files = request.FILES.getlist('fileUpload[]')
+
+        # Calculate the total file size of newly uploaded files
+        total_new_file_size_bytes = sum(file.size for file in uploaded_files)
+
+        # Fetch the total_file_size_kb value from the TicketFileTotalSize model
+        total_file_size_kb = TicketFileTotalSize.objects.filter(ticket=ticket).aggregate(
+            total_size_kb=Coalesce(Sum(F('total_file_size_kb')), 0, output_field=DecimalField())  # Specify output_field
+        )['total_size_kb']
+
+        if total_file_size_kb + Decimal(total_new_file_size_bytes) / 1024 > 30:
+            messages.error(request, 'Total file size exceeds 30KB. Please reduce the file sizes or delete previous files.')
+            return redirect('/Storepersontickets/')  # Redirect to the 'Storeperson_alltickets' page
+        else:
+            for uploaded_file in uploaded_files:
+                try:
+                    # Create a new FileUpload instance and associate it with the ticket
+                    file_upload = FileUpload(item=ticket, file=uploaded_file, file_size=uploaded_file.size)
+                    file_upload.save()
+                except ValidationError:
+                    # Handle validation error if needed
+                    pass
+
+        # Calculate the total_file_size_kb for the ticket
+        total_file_size_bytes = total_new_file_size_bytes + total_file_size_kb * 1024
+
+        # Create or update the total file size for the ticket in the TicketFileTotalSize model
+        ticket_total_size, created = TicketFileTotalSize.objects.get_or_create(ticket=ticket)
+        ticket_total_size.total_file_size_kb = total_file_size_bytes / 1024
+        ticket_total_size.save()
+        print(f'Total File Size (KB): {total_file_size_bytes / 1024} KB')
+        return redirect('/Storepersontickets/')
+
+    # Handle GET request or other cases
+    categories = Category.objects.all()
+    subcategories = Subcategory.objects.all()
+
+    return render(request, 'StorePerson/Storeperson_alltickets.html', {
+        'ticket': ticket,
+        'categories': categories,
+        'subcategories': subcategories,
+       
+    })
+======================================================================================================
+
+    path('edit_ticket/<int:ticket_id>/', views.edit_ticket, name="edit-ticket"),
+
+=================================================================================================
+
+models.py
+*****************
+class TicketFileTotalSize(models.Model):
+    ticket = models.ForeignKey('Item', on_delete=models.CASCADE)
+    total_file_size_kb = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+class FileUpload(models.Model):
+    item = models.ForeignKey('Item', related_name='uploads', on_delete=models.CASCADE)
+    file = models.FileField(upload_to='media/uploads/')
+    file_size = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.item.id} - {self.item.category}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+====================================================================================================
+
+        

@@ -1,0 +1,663 @@
+{% load static %}
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Kiosk Form</title>
+<!-- plugins:css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="icon" type="image/png" href="{% static 'images/logo-mini1.png' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+    /* Add your custom styles here */  
+  body {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: white; /* Add this line to set the background color to white */
+  }
+  
+    .loading-icon {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+ 
+
+    .loading-icon i {
+      font-size: 40px;
+      animation: spin 2s linear infinite;
+    }
+
+ 
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+ 
+
+  .keywords-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+ 
+
+  .keyword-button {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 10px;
+    border-radius: 5px; /* Change border-radius for square shape */
+    background: linear-gradient(180deg, #f0f0f0, #d0d0d0);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+  }
+
+ 
+
+  .keyword-button.selected {
+    background: linear-gradient(180deg, forestgreen, #2cca0d);
+    color: white;
+  }
+  #showMoreButton {
+    display: none;
+    margin-top: 10px;
+  }
+
+ 
+
+  #popupFormContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 9999;
+    overflow: hidden; /* Hide overflow initially */
+  }
+
+ 
+
+  #popupForm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    max-height: 70vh;
+    overflow: auto;
+  }
+  #popupForm.show {
+    overflow: auto; /* Show scrollbar when needed */
+  }
+
+  .custom-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust this value to control label width */
+}
+
+.custom-textarea {
+    height: 150px; /* Adjust this value to control textarea height */
+    resize: vertical;
+}
+ 
+      #successMessage {
+          display: none;
+          text-align: center;
+          margin-top: 10px;
+          padding: 5px;
+          background-color: #a0d468;
+          color: #fff;
+          border-radius: 5px;
+      }
+      #contactForm {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+      #contactForm input,
+    #contactForm select,
+      #contactForm textarea {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+      }
+      #contactForm textarea {
+          resize: vertical;
+      }
+      #submitBtn {
+    background-color: green;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto; /* This aligns the button to the right */
+    align-self: flex-end; /* Ensures button stays at the bottom */
+  }
+      #submitBtn:hover {
+          background-color: #a9c52b;
+      }
+       /* Add your custom styles here */
+    .popupForm {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+ 
+
+    .error-message {
+display: none;
+color: red;
+}
+
+ 
+
+.message {
+color: gray;
+}
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-inline label {
+      display: inline-block;
+      width: 100px;
+    }
+
+ 
+
+    .form-inline input,
+    .form-inline select {
+      width: calc(50% - 60px);
+      margin-right: 20px;
+    }
+    .form-group.email {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group.email label,
+    .form-group.email input {
+      width: 100%;
+    }
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+
+ 
+
+    }
+    .form-row .form-group {
+
+ 
+
+      width: 40%;
+    }
+    .keywords-box {
+      display: flex;
+      align-items: center;
+    }
+    .keywords-box button {
+      margin-left: auto;
+    }
+    .form-group textarea {
+      width: 100%;
+      height: 100px;
+    }
+    #successMessage {
+      display: none;
+      margin-top: 10px;
+      color: green;
+    }
+    /* Styles for the success modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.modal-content {
+  background-color: #fff; /* Change background color */
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+/* Media queries for responsiveness */
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+      .form-row .form-group {
+        width: 100%;
+      }
+      .keywords-box {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  .input-group-prepend {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+}
+#countryCode {
+    width: 70px; /* Adjust the width as needed */
+    margin-right: 5px; /* Add some space between the dropdown and the input */
+}
+
+ 
+
+#phone {
+    flex: 1;
+}
+    .keywords-box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+    }
+   .keyword-button {
+      display: inline-block;
+      margin: 5px;
+      padding: 8px 10px;
+      border-radius: 5px; /* Change border-radius for square shape */
+      background: linear-gradient(180deg, #f0f0f0, #d0d0d0);
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+    }
+     .keyword-button.selected {
+      background: linear-gradient(180deg, green, hsl(147, 94%, 37%));
+      color: white;
+    }
+    #showMoreButton {
+      display: none;
+      margin-top: 10px;
+    }
+  /* Styles for the selected products message box */
+.selected-products-message {
+    display: none;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 12px;
+    color: gray;
+}
+
+ 
+
+/* Show the selected products message when needed */
+.selected-products-message.active {
+    display: block;
+}
+/* Styles for the success modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+ 
+
+ 
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    } 
+
+    /* Media queries for responsiveness */
+    @media (max-width: 768px) {
+            /* Add mobile-specific styles here */
+            #popupForm {
+                width: 100%;
+                max-width: 80%;
+            }
+
+ 
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+ 
+
+            .form-inline label {
+                width: 100%;
+            }
+
+ 
+
+            .form-inline input,
+            .form-inline select {
+                width: 100%;
+                margin-right: 0;
+            }
+
+ 
+
+            .keywords-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+ 
+
+            .keyword-button {
+                width: 100%;
+                margin: 5px 0;
+                text-align: left;
+            }
+
+ 
+
+            #showMoreButton {
+                width: 100%;
+            }
+        }
+
+        #shareButton {
+          background-color: green;
+          color: #fff;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-left: 500px;
+          align-self: flex-end; /* Ensures button stays at the bottom */
+        }
+            #shareButton:hover {
+                background-color: #a9c52b;
+            }
+         /* Add your custom styles here */
+      .popupForm {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+  
+      .share-options {
+        display: none;
+        position: absolute;
+        right: 0;
+        font-size: larger;
+        transform: translateX(-206%);
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 1px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+       
+    /* Styling for FontAwesome icons */
+    .share-options i {
+        margin-right: 5px;
+    }
+    
+       .share-options a {
+            display: block;
+            margin: 5px;
+            text-decoration: none;
+        }
+      /* Example tooltip styling (can be adjusted) */
+    button[title]:hover::after {
+      content: attr(title);
+      padding: 5px 10px;
+      position: absolute;
+      z-index: 999;
+      background-color: black;
+      color: white;
+      border-radius: 5px;
+      margin-top: 10px;
+      /* Additional styling properties can be added */
+    }
+    @media (max-width: 430px) {
+      #shareButton {
+        margin-left: 150px;
+      }
+    }
+    @media (max-width: 360px) {
+      #shareButton {
+        margin-left: 50px;
+      }
+    }
+    
+
+</style>
+</head>
+<body>
+<div class="container-scroller">
+<div id="contactFormContainer">
+<div id="popupForm" style="width:658px; overflow: auto;">
+
+<form id="contactForm" method="post" action="">
+    {% csrf_token %}
+<div class="form-row">
+<div class="form-group col-md-6">
+<label for="first_name">Name</label><span style="color: red;">*</span><br><br>
+<input type="text" id="first_name" name="first_name" placeholder="Enter your name" required pattern="[A-Za-z\s]+" title="Enter a valid name (only alphabetical characters)">
+<span class="error-message" id="nameError">Please enter a valid name.</span>
+</div>
+<div class="form-group col-md-6">
+    <label for="state">Located In</label><span style="color: red;">*</span><br><br>
+    <select class="form-control" id="state" name="state" required>
+      <option value="" selected disabled>Select your Location</option>
+      {% for choice in state_choices %}
+          <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+      {% endfor %}
+  </select>
+</div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <label for="customer">Customer Status</label><span style="color: red;">*</span><br><br>
+        <select class="form-control" id="customer" name="customer" required>
+            <option value="" selected disabled>Select an option</option>
+            <option value="Existing Customer">Existing Customer</option>
+            <option value="New Customer">New Customer</option>
+        </select>
+    </div>
+</div>
+
+<div class="form-group"><br>
+      <!-- Add a loading icon element -->
+<div class="loading-icon" id="loadingIcon">
+    <i class="fas fa-spinner"></i> <!-- You can replace this with your preferred loading icon -->
+</div>
+<button type="submit" id="submitBtn">Submit</button>
+<button type="button" id="shareButton" class="btn btn-secondary" data-toggle="tooltip" data-placement="left">
+  Share
+  <i class="fas fa-share"></i>
+</button>
+<div id="shareOptions" class="share-options" style="display: none;">
+<a href="#" id="whatsappShare" style="color: green;"><i class="fab fa-whatsapp"></i></a>
+<a href="#" id="emailShare" style="color: blue;"><i class="far fa-envelope"></i></a>
+<a href="#" id="copyLink" style="color: orange;"><i class="far fa-copy"></i></a>
+</div>
+
+</div>
+<span class="close" id="closeFormBtn" style="display: none;"></span>
+</form>
+</div>
+</div>
+</div>
+</div>
+<!-- Rest of the HTML code remains unchanged -->  
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the default form submission behavior
+        // Get the value of customer_status
+        var customerStatus = document.getElementById('customer').value;
+        var firstName = document.getElementById('first_name').value;
+        var state = document.getElementById('state').value;
+    
+        if (customerStatus === 'New Customer') {
+            window.location.href = '/mainform/Strings/?first_name=' + firstName + '&state=' + state;
+        } 
+        else {
+            // Show loading icon
+            document.getElementById('loadingIcon').style.display = 'block';
+            // Use AJAX to submit the form data
+            $.ajax({
+                url: '/exform/',  // Add the URL where the form data should be submitted
+                type: 'POST',
+                data: $('#contactForm').serialize(),
+                success: function(response) {
+                    // Hide loading icon
+                    document.getElementById('loadingIcon').style.display = 'none';
+                    // Show success message using SweetAlert
+                    swal({
+                        title: 'Success',
+                        text: 'Submitted successfully',
+                        icon: 'success',
+                    }).then(() => {
+                        // Redirect to the form page
+                        window.location.href = '/exform/';  // Replace with the actual URL
+                    });
+                },
+                error: function(error) {
+                    // Handle any errors if needed
+                    console.error('Error:', error);
+                }
+            });
+        }
+    });
+    
+  </script>
+
+  <script>
+    document.addEventListener('click', function(event) {
+      const shareOptions = document.getElementById('shareOptions');
+      const shareButton = document.getElementById('shareButton');
+  
+      // Check if the clicked element is not part of the share options or share button
+      if (event.target !== shareOptions && event.target !== shareButton && !shareOptions.contains(event.target)) {
+          shareOptions.style.display = 'none';
+      }
+  });
+  
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Define the current URL
+      const currentURL = window.location.href;
+    
+      // Get the share button and options container
+      const shareButton = document.getElementById('shareButton');
+      const shareOptions = document.getElementById('shareOptions');
+    
+      // Get the share options (WhatsApp, email, and copy link)
+      const whatsappShareButton = document.getElementById('whatsappShare');
+      const emailShareButton = document.getElementById('emailShare');
+      const copyLinkButton = document.getElementById('copyLink');
+    
+      // Toggle the visibility of the share options
+      shareButton.addEventListener('click', function() {
+        shareOptions.style.display = shareOptions.style.display === 'none' ? 'block' : 'none';
+      });
+    
+      // Handle WhatsApp share
+      whatsappShareButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        const whatsappMessage = encodeURIComponent('Check out this link: ' + currentURL);
+        const whatsappURL = `https://api.whatsapp.com/send?text=${whatsappMessage}`;
+        window.open(whatsappURL, '_blank');
+      });
+    
+      // Handle email share
+      emailShareButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        const subject = encodeURIComponent('Check out this link');
+        const body = encodeURIComponent(currentURL);
+        const emailURL = `mailto:?subject=${subject}&body=${body}`;
+        window.location.href = emailURL;
+      });
+    
+      // Handle copy link
+      copyLinkButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        // Create a temporary input element to copy the URL to the clipboard
+        const tempInput = document.createElement('input');
+        tempInput.value = currentURL;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        // Optionally, you can provide a visual cue or alert to indicate successful copy
+        alert('Link copied to clipboard!');
+      });
+    });
+    
+    
+    
+  </script>
+  
+  <!-- Rest of the HTML code remains unchanged -->  
+  <script>
+          const popupForm = document.getElementById('popupForm');
+          const closeFormBtn = document.getElementById('closeFormBtn');
+          const popupFormContainer = document.getElementById('popupFormContainer');
+          function showPopupForm() {
+            popupForm.classList.add('show');
+            popupFormContainer.style.display = 'block';
+          }
+          function closePopupForm() {
+            popupForm.classList.remove('show');
+            popupFormContainer.style.display = 'none';
+          }
+          closeFormBtn.addEventListener('click', closePopupForm);
+          popupFormContainer.addEventListener('click', (event) => {
+            if (event.target === popupFormContainer) {
+              closePopupForm();
+            } 
+  
+          });
+          showPopupForm(); // Show the form initially
+  </script>
+</body>
+</html>

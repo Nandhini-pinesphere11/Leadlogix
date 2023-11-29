@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <style>
+      /* CSS to make card-people div span the entire height of tale-bg card */
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card-people {
+    flex-grow: 1;
+    display: contents;
+    align-items: stretch;
+  }
+  
+  #people-image {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .no-underline {
+  
+    text-decoration: none;
+  
+    color: inherit; /* Optionally, use the parent element's text color */
+  
+    cursor: pointer; /* Optionally, change the cursor to a pointer on hover */
+  
+  }
+  
+  
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  
+        <!-- partial -->
+  
+        <div class="main-panel">
+  
+          <div class="content-wrapper">
+  
+            <div class="row">
+  
+              <div class="col-md-12 grid-margin">
+  
+                <div class="row">
+  
+                  <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+  
+                    <h3 class="font-weight-bold"></h3>
+  
+                  </div>
+  
+   
+  
+                </div>
+  
+              </div>
+  
+            </div>
+  
+            <div class="row">
+  
+              <div class="col-md-6 grid-margin stretch-card">
+  
+                 
+  
+                  <div class="card-people ">
+  
+                   <img id="people-image" src="{% static 'images/dashboard/people2.png' %}" alt="people">
+                    
+                  </div>
+  
+                
+  
+              </div>
+  
+              <div class="col-md-6 grid-margin transparent">
+  
+                <div class="row">
+  
+                  <div class="col-md-6 mb-4 stretch-card transparent">
+  
+                    <div class="card card-tale">
+  
+                      <div class="card-body">
+  
+                        <p class="mb-4">Total Enrollments</p>
+  
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{vendor_count}}</p>
+  
+                        <p>Counts So far</p>
+  
+                      </div>
+  
+                    </div>
+  
+                  </div>
+  
+                  <div class="col-md-6 mb-4 stretch-card transparent">
+  
+                    <div class="card card-dark-blue">
+  
+                      <div class="card-body">
+  
+                        <p class="mb-4">Department Stats</p>
+  
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{highest_count}}</p>
+  
+                        <p>From {{highest_department}}</p>
+  
+                      </div>
+  
+                    </div>
+  
+                  </div>
+  
+                </div>
+  
+                <div class="row">
+  
+                  <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+  
+                    <div class="card card-light-blue">
+  
+                      <div class="card-body">
+  
+                        <p class="mb-4" >Demographics</p>
+  
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{ highest_state_count }}</p>
+  
+                        <p>From {{ highest_state_value }}</p>
+  
+                      </div>
+  
+                    </div>
+  
+                  </div>
+  
+                  <div class="col-md-6 stretch-card transparent">
+  
+                    <div class="card card-light-danger">
+  
+                      <div class="card-body">
+  
+                        <p class="mb-4">Supplied to same Industry</p>
+  
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{ true_same_industry_count }}</p>
+  
+                        <p></p>
+  
+                      </div>
+  
+                    </div>
+  
+                  </div>
+  
+                </div>
+  
+              </div>
+  
+            </div>
+  
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card position-relative">
+                  <div class="card-body">
+                    <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <div class="table-responsive mb-3 mb-md-0 mt-3">
+                            <h2 style="text-align: center">Demographics</h2><br>
+                            <table class="table table-borderless report-table">
+                              {% for state in state_data %}
+                                {% if forloop.counter <= 5 %} {# Display only the first 5 states #}
+                                  <tr>
+                                    <td class="text-muted">
+                                      <a href="#" class="no-underline" style="text-decoration: none; color: inherit;">
+                                        {{ state.state }}
+                                      </a>
+                                    </td>
+                                    <td class="w-100 px-0">
+                                      <div class="progress progress-md mx-4">
+                                        <div class="progress-bar" id="progress-bar-{{ forloop.counter }}"
+                                          role="progressbar" style="width: {{ state.progress_percentage }}%"
+                                          aria-valuenow="{{ state.progress_percentage }}"
+                                          aria-valuemin="0" aria-valuemax="100"></div>
+                                      </div>
+                                    </td>
+                                    <td><h5 class="font-weight-bold mb-0">{{ state.vendor_count }}</h5></td>
+                                  </tr>
+                                {% endif %}
+                              {% endfor %}
+                            </table>
+                          </div>
+                        </div>
+            <br><br>
+                    </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card position-relative">
+                      <div class="card-body">
+                        <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+                          <div class="carousel-inner">
+                            <div class="carousel-item active">
+                              <div class="table-responsive mb-3 mb-md-0 mt-3">
+                                <h2 style="text-align: center">Department Stats</h2><br>
+                                <table class="table table-borderless report-table">
+                                  {% for department in department_data %}
+                                    <tr>
+                                      <td class="text-muted">                        
+                                        <a href="" class="no-underline" target="_blank" style="text-decoration: none; color: inherit;">{{ department.department }}</a>
+                                      </td>
+                                      <td class="w-100 px-0">
+                                        <div class="progress progress-md mx-4">
+                                          <div class="progress-bar" id="progress-bar-{{ forloop.counter }}"
+                                            role="progressbar" style="width: {{ department.progress_percentage }}%"
+                                            aria-valuenow="{{ department.progress_percentage }}"
+                                            aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                      </td>
+                                      <td><h5 class="font-weight-bold mb-0">{{ department.vendor_count }}</h5></td>
+                                    </tr>
+                                  {% endfor %}
+                                </table>         
+                                
+                                </div>
+                
+                              </div>
+                </div>     
+                
+                </div>
+                
+
+            </div>
+            </div>
+            </div>
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                var progressBars = document.querySelectorAll('.progress-bar');
+                var colors = ['#4B49AC', '#FFC100', '#8A2BE2', '#FF0000', '#008000', '#FF5733', '#3498DB', '#E74C3C', '#27AE60', '#9B59B6'];
+            
+                progressBars.forEach(function(bar) {
+                  var randomColor = colors[Math.floor(Math.random() * colors.length)];
+                  bar.style.backgroundColor = randomColor;
+                });
+              });
+            </script>
+          </div>
+          </div>
+          
+{% endblock %}

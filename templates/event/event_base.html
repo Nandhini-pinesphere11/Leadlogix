@@ -1,0 +1,838 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+ 
+
+<head>
+
+  <!-- Required meta tags -->
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Strings Infinity</title>
+
+  <!-- plugins:css -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+
+  <!-- endinject -->
+
+  <!-- Plugin css for this page -->
+
+  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'js/select.dataTables.min.css' %}">
+
+  <!-- End plugin css for this page -->
+
+  <!-- inject:css -->
+
+  <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
+
+  <!-- endinject -->
+
+  <link rel="shortcut icon" href="{% static 'images/logo-mini1.jpg' %}" />
+
+  <style>
+    /* CSS to make card-people div span the entire height of tale-bg card */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-people {
+  flex-grow: 1;
+  display: contents;
+  align-items: stretch;
+}
+
+#people-image {
+  width: 100%;
+  height: 100%;
+}
+
+.no-underline {
+
+  text-decoration: none;
+
+  color: inherit; /* Optionally, use the parent element's text color */
+
+  cursor: pointer; /* Optionally, change the cursor to a pointer on hover */
+
+}
+
+
+</style>
+</head>
+
+<body>
+
+  <div class="container-scroller">
+
+    <!-- partial:partials/_navbar.html -->
+
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+
+        <a class="navbar-brand brand-logo mr-5" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini.png' %}" class="mr-2" alt="logo"/></a>
+
+        <a class="navbar-brand brand-logo-mini" href="{% url 'index1' %}"><img src="{% static 'images/logo-mini1.jpg' %}" alt="logo"/></a>
+
+      </div>
+
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+
+          <span class="icon-menu"></span>
+
+        </button>    
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+
+            <a class="nav-link" href="{% url 'Create_event' %}" >
+
+              <img src="{% static 'images/faces/backicon4.svg' %}" alt="profile"/>
+            </a>
+
+           
+
+            </div>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+              <span class="icon-menu"></span>
+            </button>
+
+          </li>          
+
+        </ul>
+
+      </div>
+
+    </nav>
+
+    <!-- partial -->
+
+    <div class="container-fluid page-body-wrapper">
+
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
+        <ul class="nav">
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_dashboard' username=request.user.username event_id=event.id %}">
+
+              <i class="icon-grid menu-icon"></i>
+
+              <span class="menu-title">Dashboard</span>
+
+            </a>
+
+          </li>
+
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_reports' username=request.user.username event_id=event.id %}">
+
+              <i class="icon-paper menu-icon"></i>
+
+              <span class="menu-title">Reports</span>
+
+            </a>
+
+          </li>
+          <li class="nav-item">
+
+            <a class="nav-link" href="{% url 'event_form' event_id=event.id %}">
+
+              <i class="icon-layout menu-icon"></i>
+
+              <span class="menu-title">Event Form</span>
+
+            </a>
+
+          </li>
+
+
+
+        </ul>
+
+      </nav>
+
+      <!-- partial -->
+      
+        <div class="main-panel">
+
+          <div class="content-wrapper">
+
+            <div class="row">
+
+              <div class="col-md-12 grid-margin">
+
+                <div class="row">
+
+                  <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+
+                    <h3 class="font-weight-bold"></h3>
+
+                  </div>
+
+  
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-6 grid-margin stretch-card">
+
+                
+
+                  <div class="card-people ">
+
+                  <img id="people-image" src="{% static 'images/dashboard/people2.png' %}" alt="people">
+                    
+                  </div>
+
+                
+
+              </div>
+
+              <div class="col-md-6 grid-margin transparent">
+
+                <div class="row">
+
+                  <div class="col-md-6 mb-4 stretch-card transparent">
+
+                    <div class="card card-tale">
+
+                      <div class="card-body">
+
+                        <p class="mb-4">Today's Engagements</p>
+
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{contact_count_today}}</p>
+
+                        <p>Counts So far</p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="col-md-6 mb-4 stretch-card transparent">
+
+                    <div class="card card-dark-blue">
+
+                      <div class="card-body">
+
+                        <p class="mb-4">Total Engagements</p>
+
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{contact_count}}</p>
+
+                        <p>Counts So far</p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="row">
+
+                  <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+
+                    <div class="card card-light-blue">
+
+                      <div class="card-body">
+
+                        <p class="mb-4" >Demographics</p>
+
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{ highest_state_count }}</p>
+
+                        <p>From {{ highest_state_value }}</p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="col-md-6 stretch-card transparent">
+
+                    <div class="card card-light-danger">
+
+                      <div class="card-body">
+
+                        <p class="mb-4">Team Stats</p>
+
+                        <p class="fs-30 mb-2" style="font-size: 50px; font-weight: 600">{{ highest_engage_count }}</p>
+
+                        <p>By {{ highest_engage_value }}</p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card">
+                <div class="card position-relative">
+                  <div class="card-body">
+                    <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <div class="table-responsive mb-3 mb-md-0 mt-3">
+                            <h2 style="text-align: center">Demographics</h2><br>
+                            <table class="table table-borderless report-table">
+                              {% for state in state_data %}
+                                {% if forloop.counter <= 5 %} {# Display only the first 5 states #}
+                                  <tr>
+                                    <td class="text-muted">
+                                      <a href="{% url 'event_reports' username=request.user.username event_id=event.id %}?state={{ state.state }}" class="no-underline" target="_blank" style="text-decoration: none; color: inherit;">
+                                        {{ state.state }}
+                                      </a>
+                                    </td>
+                                    <td class="w-100 px-0">
+                                      <div class="progress progress-md mx-4">
+                                        <div class="progress-bar" id="progress-bar-{{ forloop.counter }}"
+                                          role="progressbar" style="width: {{ state.progress_percentage }}%"
+                                          aria-valuenow="{{ state.progress_percentage }}"
+                                          aria-valuemin="0" aria-valuemax="100"></div>
+                                      </div>
+                                    </td>
+                                    <td><h5 class="font-weight-bold mb-0">{{ state.contact_count }}</h5></td>
+                                  </tr>
+                                {% endif %}
+                              {% endfor %}
+                            </table>
+                          </div>
+                        </div>
+            <br><br>
+        </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+    <div class="card-body">
+        <div class="card position-relative">
+            <h2 style="text-align: center; margin-top: 20px;">Customer Analysis</h2>
+            <div class="row">
+                <div class="col-md-6 mt-3 d-flex flex-column justify-content-center align-items-center">
+                    <canvas id="north-america-chart"></canvas>
+                </div>
+                <div class="col-md-6 mt-3" style="padding-top: 45px">
+                    <div id="north-america-legend"></div>
+                </div>
+            </div>
+            <div style="margin-bottom: 20px;"></div> <!-- Space below the chart -->
+        </div>
+    </div>
+  </div>
+  </div>
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-center"> <!-- Center the content -->
+          <h2 style="text-align: center; margin-bottom: 0;">Datewise Report</h2><br>
+       </div>
+        <canvas id="sales-chart"></canvas>
+      </div>
+    </div>
+  </div>
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-center"> <!-- Center the content -->
+            <h2 style="text-align: center; margin-bottom: 0;">Employee Report</h2><br>
+        </div>
+          <canvas id="employee-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card position-relative">
+          <div class="card-body">
+            <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <div class="table-responsive mb-3 mb-md-0 mt-3">
+                    <h2 style="text-align: center">Product Stats</h2><br>
+                    <table class="table table-borderless report-table">
+                      <thead>
+                        <tr>
+                          <th>Product Name</th>
+                          <th>Product Interests</th>
+                          <th>Total Enquiries</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% for product in product_data %}
+                          <tr>
+                              <td class="text-muted">
+                                  <a href="{% url 'event_reports' username=request.user.username event_id=event.id %}?product_data={{ product.name }}" class="no-underline" target="_blank" style="text-decoration: none; color: inherit;">{{ product.name }}</a>
+                              </td>
+                              <td>
+                                  <div class="progress progress-md mx-4" style="height: 25px;">
+                                      <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar-{{ forloop.counter }}"
+                                          role="progressbar" style="width: {{ product.product_count_percentage }}%;"
+                                          aria-valuenow="{{ product.product_count_percentage }}"
+                                          aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                              </td>
+                              <td><h5 class="font-weight-bold mb-0">{{ product.count }}</h5></td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                    </table>     
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>  
+    <footer class="footer">
+
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023.  <a href="https://stringsinfinity.com//" target="_blank">Strings Infinity</a> All rights reserved.</span>
+      </div>
+
+    </footer>
+                  
+     
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var progressBars = document.querySelectorAll('.progress-bar');
+    var colors = ['#4B49AC', '#FFC100', '#8A2BE2', '#FF0000', '#008000', '#FF5733', '#3498DB', '#E74C3C', '#27AE60', '#9B59B6'];
+
+    progressBars.forEach(function(bar) {
+      var randomColor = colors[Math.floor(Math.random() * colors.length)];
+      bar.style.backgroundColor = randomColor;
+    });
+  });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+                              
+    <!-- container-scroller -->
+  
+
+    <!-- plugins:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+    <script src="{% static 'js/dataTables.select.min.js' %}"></script>
+  
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/settings.js' %}"></script>
+    <script src="{% static 'js/todolist.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script> 
+    <!-- End custom js for this page-->     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      (function($) {
+        'use strict';
+        $(function() {
+          if ($("#sales-chart").length) {
+            var username = "{{ username }}";
+            var event_id = {{ event.id }};
+          $.ajax({
+              url: `/get_contact_counts/${event_id}/`,  // URL of the Django view
+              type: 'GET',
+              success: function(data) {
+                  var labels = data.map(function(item) {
+                    return moment(item.date).format('DD MMM').toUpperCase();
+                  });
+                  var counts = data.map(function(item) {
+                      return item.count;
+                  });
+      
+                  var maxCount = Math.max(...counts); // Find the maximum count value
+                  var stepSize = Math.ceil(maxCount / 10); // Calculate the step size
+      
+                  var SalesChartCanvas = $("#sales-chart").get(0).getContext("2d");
+                  var SalesChart = new Chart(SalesChartCanvas, {
+                      type: 'bar',
+                      data: {
+                          labels: labels,
+                          datasets: [{
+                              label: 'Count',
+                              data: counts,
+                              backgroundColor: '#98BDFF'
+                          }]
+                      },
+                      options: {
+                        cornerRadius: 5,
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        layout: {
+                          padding: {
+                            left: 0,
+                            right: 0,
+                            top: 20,
+                            bottom: 0
+                          }
+                        },
+                        scales: {
+                          yAxes: [{
+                            display: true,
+                            gridLines: {
+                              display: true,
+                              drawBorder: false,
+                              color: "#F2F2F2"
+                            },
+                            ticks: {
+                              display: true,
+                              min: 0,
+                              max:  maxCount,
+                              stepSize: stepSize, 
+                              callback: function(value, index, values) {
+                                return  value ;
+                              },
+                              autoSkip: true,
+                              maxTicksLimit: 10,
+                              fontColor:"#6C7383"
+                            }
+                          }],
+                          xAxes: [{
+                            stacked: false,
+                            ticks: {
+                              beginAtZero: true,
+                              fontColor: "#6C7383"
+                            },
+                            gridLines: {
+                              color: "rgba(0, 0, 0, 0)",
+                              display: false
+                            },
+                            barPercentage: 1
+                          }]
+                        },
+                        legend: {
+                          display: false
+                        },
+                        elements: {
+                          point: {
+                            radius: 0
+                          }
+                        },
+                        onClick: function(e, elements) {
+                          if (elements.length > 0) {
+                            var clickedDate = labels[elements[0]._index];
+                            var formattedDate = moment(clickedDate, 'DD MMM').format('DD MM YYYY').split(' ').join('%20');
+                            var url = `/event_reports/${username}/${event_id}/?selected_date=` + formattedDate;
+                            window.open(url, '_blank');
+                        }
+                      }
+                      },
+                  });
+              }
+          });
+          document.getElementById('sales-legend').innerHTML = SalesChart.generateLegend();
+        }
+      }); 
+      })(jQuery);
+    </script>
+    <script>
+      (function($) {
+        'use strict';
+        $(function() {
+          
+          if ($("#north-america-chart").length) {
+            // Make an AJAX request to your Django view
+            var username = "{{ username }}";
+            var event_id = {{ event.id }};
+            $.ajax({
+              url: `/get_customer_confidence_datas/${event_id}/`, 
+              method: 'GET',
+              dataType: 'json',
+              success: function(data) {
+                // Use the data obtained from the view to populate the chart
+                var areaData = {
+                  labels: data.labels,  // Use the labels from the view's response
+                  datasets: [{
+                    data: data.values,  // Use the values from the view's response
+                    backgroundColor: [
+                      "#4B49AC","#FFC100", "#248AFD",
+                    ],
+                    borderColor: "rgba(0,0,0,0)"
+                  }]
+                };
+      
+                var areaOptions = {
+                  responsive: true,
+              maintainAspectRatio: true,
+              segmentShowStroke: false,
+              cutoutPercentage: 78,
+              elements: {
+                arc: {
+                    borderWidth: 4
+                }
+              },      
+              legend: {
+                display: false
+              },
+              tooltips: {
+                enabled: true
+              },
+              legendCallback: function(chart) {
+                var text = [];
+                for (var i = 0; i < chart.data.datasets[0].data.length; i++) {
+                  text.push('<div class="d-flex justify-content-between mx-4 mx-xl-5 mt-3"><div class="d-flex align-items-center"><div class="mr-3" style="width:20px; height:20px; border-radius: 50%; background-color: ' + chart.data.datasets[0].backgroundColor[i] + '"></div><p class="mb-0">' + chart.data.labels[i] + '</p></div>');
+                  text.push('</div>');
+                }
+                return '<div class="report-chart">' + text.join("") + '</div>';
+              },
+                };
+      
+                var total_count = data.total_count;
+      
+                var northAmericaChartPlugins = {
+                  beforeDraw: function(chart) {
+                    var width = chart.chart.width,
+                        height = chart.chart.height,
+                        ctx = chart.chart.ctx;
+                
+                    ctx.restore();
+                    var fontSize = 3.125;
+                    ctx.font = "500 " + fontSize + "em sans-serif";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = "#13381B";
+                
+                    var text = total_count,
+                        textX = Math.round((width - ctx.measureText(text).width) / 2),
+                        textY = height / 2;
+                
+                    ctx.fillText(text, textX, textY);
+                    ctx.save();
+                  }
+                }
+      
+                // Render the chart
+                var northAmericaChartCanvas = $("#north-america-chart").get(0).getContext("2d");
+                var northAmericaChart = new Chart(northAmericaChartCanvas, {
+                  type: 'doughnut',
+                  data: areaData,
+                  options: areaOptions,
+                  plugins: northAmericaChartPlugins
+                });
+      
+                northAmericaChart.canvas.onclick = function(evt) {
+                  var activeSlice = northAmericaChart.getElementAtEvent(evt)[0];
+                  if (activeSlice) {
+                    var selectedData = activeSlice._model.label;  // Extract the label of the clicked slice
+                    var url = `/event_reports/${username}/${event_id}/?selected_data=` + selectedData;
+                    window.open(url, '_blank'); // Redirect to event_reports page with selected_data query parameter
+                  }
+                };
+      
+                // Render the legend
+                document.getElementById('north-america-legend').innerHTML = northAmericaChart.generateLegend();
+              },
+              error: function(error) {
+                console.error(error);
+              }
+            });
+          } 
+        });
+      })(jQuery);
+      
+    </script>    
+    <script>
+      // Employee count
+  (function($) {
+    'use strict';
+    $(function() {
+      if ($("#employee-chart").length) {
+        var username = "{{ username }}";
+        var event_id = {{ event.id }};
+        $.ajax({
+          url: `/get_engage_datas/${event_id}/`,  // URL of the Django view
+          type: 'GET',
+          success: function(data) {
+              var engages = data.map(function(item) {
+                return item.engaged_by;
+              });
+              var counts = data.map(function(item) {
+                  return item.count;
+              });
+  
+              var maxCount = Math.max(...counts); // Find the maximum count value
+              var stepSize = Math.ceil(maxCount / 10); // Calculate the step size
+  
+              var SalesChartCanvas = $("#employee-chart").get(0).getContext("2d");
+              var SalesChart = new Chart(SalesChartCanvas, {
+                  type: 'bar',
+                  data: {
+                      labels: engages, // Use engages array for x-axis labels
+                      datasets: [{
+                          label: 'Count',
+                          data: counts,
+                          backgroundColor: [
+                            '#98BDFF',
+                            '#FFD700', 
+                            '#FF6347', 
+                            '#4B49AC', 
+                            '#FFC100', 
+                            '#8A2BE2', 
+                            '#FF0000', 
+                            '#008000', 
+                            '#FF5733', 
+                            '#3498DB', 
+                            '#E74C3C', 
+                            '#27AE60', 
+                            '#9B59B6',
+                            '#98BDFF',
+                            '#FFD700', 
+                            '#FF6347', 
+                            '#4B49AC', 
+                            '#FFC100', 
+                            '#8A2BE2', 
+                            '#FF0000', 
+                            '#008000', 
+                            '#FF5733', 
+                            '#3498DB', 
+                            '#E74C3C', 
+                            '#27AE60', 
+                            '#9B59B6',
+                            '#98BDFF',
+                            '#FFD700', 
+                            '#FF6347', 
+                            '#4B49AC', 
+                            '#FFC100', 
+                            '#8A2BE2', 
+                            '#FF0000', 
+                            '#008000', 
+                            '#FF5733', 
+                            '#3498DB', 
+                            '#E74C3C', 
+                            '#27AE60', 
+                            '#9B59B6',
+                        ]
+                      }]
+                  },
+                  options: {
+                    cornerRadius: 5,
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    layout: {
+                      padding: {
+                        left: 0,
+                        right: 0,
+                        top: 20,
+                        bottom: 0
+                      }
+                    },
+                    scales: {
+                      yAxes: [{
+                        display: true,
+                        gridLines: {
+                          display: true,
+                          drawBorder: false,
+                          color: "#F2F2F2"
+                        },
+                        ticks: {
+                          display: true,
+                          min: 0,
+                          max:  maxCount,
+                          stepSize: stepSize, 
+                          callback: function(value, index, values) {
+                            return  value ;
+                          },
+                          autoSkip: true,
+                          maxTicksLimit: 10,
+                          fontColor:"#6C7383"
+                        }
+                      }],
+                      xAxes: [{
+                        stacked: false,
+                        ticks: {
+                          beginAtZero: true,
+                          fontColor: "#6C7383"
+                        },
+                        gridLines: {
+                          color: "rgba(0, 0, 0, 0)",
+                          display: false
+                        },
+                        barPercentage: 1
+                      }]
+                    },
+                    legend: {
+                      display: false
+                    },
+                    elements: {
+                      point: {
+                        radius: 0
+                      }
+                    },
+                    onClick: function(e, elements) {
+                      if (elements.length > 0) {
+                        var clickedEngage = engages[elements[0]._index];
+                        var url = `/event_reports/${username}/${event_id}/?engaged_by=` + clickedEngage;
+                        window.open(url, '_blank');
+                      }
+                    }
+                  },
+              });
+          }
+        });
+        document.getElementById('sales-legend').innerHTML = SalesChart.generateLegend();
+      }
+    }); 
+  })(jQuery);
+</script>
+
+  </body>
+  
+  </html>
+  
+  

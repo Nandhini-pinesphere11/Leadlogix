@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Import Font Dancing Script */
+    @import url(https://fonts.googleapis.com/css?family=Dancing+Script);
+
+    * {
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #F4F6FE;
+        font-family: Arial;
+        overflow: hidden;
+    }
+
+    .title {
+        font-family: 'Dancing Script', cursive;
+        padding-top: 15px;
+        position: absolute;
+        left: 45%;
+    }
+
+    /* ... (your existing styles) */
+
+    /* Main */
+    .main {
+        margin-top: 2%;
+        margin-left: 5%; /* Adjusted for better responsiveness */
+        margin-right: 5%; /* Adjusted for better responsiveness */
+        font-size: 28px;
+        padding: 0 10px;
+    }
+
+    .main h2 {
+        color: #333;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .main .card {
+        background-color: #fff;
+        border-radius: 18px;
+        box-shadow: 1px 1px 8px 0 grey;
+        margin-bottom: 20px;
+        padding: 40px; /* Increased padding for a larger card size */
+        width: 147%;
+
+    }
+
+    .main .card table {
+        border: none;
+        font-size: 16px;
+        width: 100%; /* Make the table width 100% */
+    }
+
+    .main .card table td {
+        padding: 9px; /* Adjusted for better spacing */
+    }
+
+    h3 {
+        font-weight: bold;
+    }
+
+    /* Responsive adjustments */
+    @media only screen and (max-width: 768px) {
+        .main .card {
+            padding: 5px;
+            margin-left: -22px;
+            width: 102%;
+        }
+
+        .main .card table td {
+            padding: 10px; /* Adjusted for better spacing on smaller screens */
+        }
+    }
+
+    @media only screen and (max-width: 375px) {
+        .main .card {
+            padding: 10px; /* Further reduced padding for 375px screens */
+        }
+
+        .main .card table td {
+            padding: 5px; /* Further reduced padding for better spacing on smaller screens */
+        }
+    }
+</style>
+
+    <!-- Navbar top -->
+  
+    <!-- End -->
+
+    <!-- Sidenav -->
+  
+    <!-- End -->
+
+    <!-- Main -->
+    <div class="main">
+        <h2>PROFILE</h2>
+        <div class="card">
+            <div class="card-body">
+                <!-- Plan and Subscription -->
+                <h3>Plan and Subscription</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 160px;">Company Name:</td>
+                           
+                            <td>{{ user_profile.company_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email:</td>
+                            <td>{{ user_profile.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone:</td>
+                            <td>{{ user_profile.phone_country_code }} {{ user_profile.phone_number }}</td>
+                        </tr>
+                        <tr>
+                            <td>Plan Name:</td>
+                            <td>{{ user_profile.plan_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>From Date:</td>
+                            <td>{{ user_profile.from_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>End Date:</td>
+                         
+                            <td>{{ user_profile.end_date }}</td>
+                        </tr>
+                    </tbody>
+                </table><br>
+    
+                <!-- Reference Information -->
+                <h3>Reference Information</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 160px;">Reference No:</td>
+                           
+                            <td>{{ user_profile.reference_number }}</td>
+                        </tr>
+                    </tbody>
+                </table><br>
+    
+                <!-- Contact Information -->
+                <h3>Contact Information</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 160px;">Contact Person:</td>
+                          
+                            <td>{{ user_profile.contact_person }}</td>
+                        </tr>
+                    </tbody>
+                </table><br>
+    
+                <!-- Address Information -->
+                <h3>Address Information</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 160px;">Address 1:</td>
+                            
+                            <td>{{ user_profile.address1 }}</td>
+                        </tr>
+                        <tr>
+                            <td>State:</td>
+                           
+                            <td>{{ user_profile.state }}</td>
+                        </tr>
+                        <tr>
+                            <td>Address 2:</td>
+                            
+                            <td>{{ user_profile.address2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Postcode:</td>
+                          
+                            <td>{{ user_profile.postcode }}</td>
+                        </tr>
+                        <tr>
+                            <td>City:</td>
+                           
+                            <td>{{ user_profile.city }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- End -->
+    {% endblock %}
