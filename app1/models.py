@@ -202,6 +202,7 @@ class ProductType(models.Model):
 class Attachment(models.Model):
     file = models.FileField(upload_to='attachments/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return self.file.name
 
@@ -210,6 +211,7 @@ class CustomizedEmail(models.Model):
     subject = models.CharField(max_length=255)
     message = models.TextField()
     attached_files = models.ManyToManyField(Attachment)
+    
 
     def __str__(self):
         return f"CustomizedEmail for {self.product.product_name}"

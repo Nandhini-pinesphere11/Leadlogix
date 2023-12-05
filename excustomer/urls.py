@@ -8,5 +8,6 @@ urlpatterns = [
     path('edit_excustomer/<int:pk>/', views.edit_excustomer, name='edit_excustomer'),
     path('excustomer/view/<int:excustomer_id>/', views.view_excustomer, name='view_excustomer'),
     path('excustomer_compose/', views.excustomer_compose_message, name='excustomer_compose_message'),
+    path('fetch_customized_email/', views.fetch_customized_email, name='fetch_customized_email'),
 
 ]

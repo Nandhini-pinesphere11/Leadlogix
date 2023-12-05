@@ -397,7 +397,9 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button>
+              
           </div>
+          
           <div class="modal-body">
               <div class="loader-container" style="display: none;">
                   <div class="loader-overlay"></div>
@@ -407,8 +409,10 @@
                   </div>
               </div>
               <!-- Use the compose_form instead of existing_message to populate form fields -->
-              <form method="post" action="{% url 'compose_message' %}" enctype="multipart/form-data" id="composeForm">
+              <form method="post" action="{% url 'event_compose_message' %}" enctype="multipart/form-data" id="composeForm">
                   {% csrf_token %}
+                  <input type="hidden" id="event_id" name="event_id" value="{{ event.id }}">
+
                   <div class="form-group">
                       <label for="subject">Subject</label>
                       <input type="text" class="form-control" id="subject" name="subject" value="">
@@ -420,16 +424,29 @@
                   <input type="hidden" id="selectedEmails" name="selectedEmails" value="">
 
                   <div class="form-group">
-                      <label for="attachments">Attachments</label>
-                      <!-- Input for new attachments -->
-                      <input type="file" class="form-control-file" id="attachments" name="attachments" multiple>
-                  </div>
-                  <div class="row">
-                      <div class="col-md-6"></div>
-                      <div class="col-md-6 text-right">
-                          <button type="submit" class="btn btn-primary" id="sendButton">Mail Send</button>
-                      </div>
-                  </div>
+                    <label for="attachments">Attachments</label>
+                    <!-- Input for new attachments -->
+                    <input type="file" class="form-control-file" id="attachments" name="attachments" multiple>
+                    <!-- Display existing attachments (if any) -->
+                    <div id="existingAttachments"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Add your styled dropdown here -->
+                        <div class="dropdown">
+                          <select class="form-control btn btn-primary" id="product" name="product" style="color: white;" onchange="fetchCustomizedEmail()">
+                            <option value="" disabled selected>Select Template</option>
+                            {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.product_name }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="submit" class="btn btn-primary" id="sendButton">Mail Send</button>
+                    </div>
+                </div>
               </form>
           </div>
 
@@ -452,27 +469,72 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-<script>
-    $(document).ready(function () {
-        var composeModal = $('#composeModal');
-        var loaderContainer = $('.loader-container');
+    <script>
+      $(document).ready(function () {
+      // Function to update form fields based on selected product
+      function updateFormFields(productId) {
+        // Make an AJAX request to get the CustomizedEmail for the selected product
+        $.ajax({
+          url: '/fetch_event_customized_email/',  // Replace with the actual URL to fetch CustomizedEmail
+          method: 'GET',
+          data: { product_id: productId },
+          success: function (data) {
+            // Update form fields with data from the CustomizedEmail
+            $('#subject').val(data.subject);
+            $('#message').val(data.message);
 
-        // Simple test to check if jQuery is working
-        console.log('jQuery version:', $.fn.jquery);
+            // Clear existing attachments and add new ones
+            $('#existingAttachments').empty();
+            if (data.attachments.length > 0) {
+              // Display the attachment names as links
+    // Display the attachment names as links
+    for (var i = 0; i < data.attachments.length; i++) {
+        var attachmentLink = $('<a>')
+            .attr('href', '/media/' + data.attachments[i])  // Note the '/media/' prefix
+            .attr('download', data.attachments[i])
+            .text(data.attachments[i]);
+        $('#existingAttachments').append(attachmentLink).append('<br>');
+    }
 
-        // Add an event listener for the send mail button
-        $('#composeForm').submit(function () {
-            // Show the loader before the form is submitted
-            loaderContainer.show();
+            }
+          },
+          error: function (error) {
+            console.log('Error fetching CustomizedEmail:', error);
+          },
         });
+      }
 
-        // Add an event listener for modal hide event
-        composeModal.on('hidden.bs.modal', function () {
-            // Clear form fields on modal close
-            $('#composeForm')[0].reset();
-        });
+      // Event listener for dropdown change
+      $('#product').on('change', function () {
+        var selectedProductId = $(this).val();
+        // Call the function to update form fields
+        updateFormFields(selectedProductId);
+      });
     });
-</script>
+
+    </script>
+    <script>
+      $(document).ready(function () {
+          var composeModal = $('#composeModal');
+          var loaderContainer = $('.loader-container');
+  
+          // Simple test to check if jQuery is working
+          console.log('jQuery version:', $.fn.jquery);
+  
+          // Add an event listener for the send mail button
+          $('#composeForm').submit(function () {
+              // Show the loader before the form is submitted
+              loaderContainer.show();
+          });
+  
+          // Add an event listener for modal hide event
+          composeModal.on('hidden.bs.modal', function () {
+              // Clear form fields on modal close
+              $('#composeForm')[0].reset();
+          });
+      });
+  </script>
+  
           <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   $(document).ready(function () {

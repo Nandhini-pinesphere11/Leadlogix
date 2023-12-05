@@ -129,47 +129,82 @@ def view_excustomer(request, excustomer_id):
     excustomer = ExCustomer.objects.get(pk=excustomer_id)
     return render(request, 'excustomer/excustomer_reports.html', {'excustomer': excustomer})
 
+
 def excustomer_compose_message(request):
     existing_message = ComposeMessage.objects.first()
     form = ComposeMessageForm(instance=existing_message)
- 
+
     if request.method == 'POST':
         selected_emails = request.POST.get('selectedEmails', '').split(',')
- 
+
         # Check if there are any selected emails
         if not selected_emails or all(email.strip() == '' or email.strip().lower() == 'none' for email in selected_emails):
             messages.error(request, 'Please provide valid email addresses.')
             return redirect('reports_excust')
- 
+
         form = ComposeMessageForm(request.POST, request.FILES, instance=existing_message)
- 
+
         if form.is_valid():
             new_message = form.save(commit=False)
-            new_message.save()
-        
- 
-            attachments = []
+
+            # Clear existing attachments before adding new ones
+            new_message.attachments.clear()
+
+            # Handle attachments obtained through AJAX (related to the selected product)
+            attachments_from_ajax = form.cleaned_data['attachments'].split(',')
+            existing_attachments = ComposeAttachment.objects.filter(file__in=attachments_from_ajax)
+            new_attachments = []
+
+            for attachment in attachments_from_ajax:
+                attachment_obj, created = existing_attachments.get_or_create(file=attachment)
+                new_message.attachments.add(attachment_obj)
+                new_attachments.append(attachment_obj)
+
+            # Handle manual attachments (selected through file input)
             for file in request.FILES.getlist('attachments'):
-                attachment, created = ComposeAttachment.objects.get_or_create(file=file)
-                attachments.append(attachment)
- 
-            new_message.attachments.set(attachments)
- 
+                attachment_obj, created = ComposeAttachment.objects.get_or_create(file=file)
+                new_message.attachments.add(attachment_obj)
+                new_attachments.append(attachment_obj)
+
+            new_message.save()  # Save the message again after adding attachments
+
             subject = form.cleaned_data['subject']
             message = form.cleaned_data['message']
- 
+
             email = EmailMessage(subject, message, 'leadlogix.communications@gmail.com', selected_emails)
- 
-            for attachment in attachments:
-                file_obj = attachment.file.file
-                content_type = getattr(file_obj, 'mimetype', None)
-                if not content_type:
-                    content_type, _ = mimetypes.guess_type(attachment.file.name)
-                email.attach(attachment.file.name, file_obj.read(), content_type)
- 
+
+            for attachment in new_attachments:
+                if attachment.file and attachment.file.file:
+                    file_obj = attachment.file.file
+                    content_type = getattr(file_obj, 'content_type', None)
+                    if not content_type:
+                        content_type, _ = mimetypes.guess_type(attachment.file.name)
+                    email.attach(attachment.file.name, file_obj.read(), content_type)
+
             email.send()
             messages.success(request, 'Email sent successfully!')
             return redirect('reports_excust')
- 
-    return render(request, 'excustomer/excustomer_reports.html', {'form': form})
+        else:
+            # Print form errors
+            print(form.errors)
+            messages.error(request, 'Form submission failed. Please check the form for errors.')
 
+    return render(request, 'excustomer_reports.html', {'form': form})
+
+
+
+
+# views.py
+
+def fetch_customized_email(request):
+    product_id = request.GET.get('product_id')
+    try:
+        customized_email = CustomizedEmail.objects.get(product_id=product_id)
+        data = {
+            'subject': customized_email.subject,
+            'message': customized_email.message,
+            'attachments': [str(attachment) for attachment in customized_email.attached_files.all()],
+        }
+        return JsonResponse(data)
+    except CustomizedEmail.DoesNotExist:
+        return JsonResponse({'error': 'CustomizedEmail not found for the selected product'})

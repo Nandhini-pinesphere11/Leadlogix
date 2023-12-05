@@ -3,197 +3,214 @@
 {% block content %}
 <head>
   <style>
-    /* CSS to make card-people div span the entire height of tale-bg card */
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
+        /* CSS to make card-people div span the entire height of tale-bg card */
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 
-.card-people {
-  flex-grow: 1;
-  display: contents;
-  align-items: stretch;
-}
+    .card-people {
+      flex-grow: 1;
+      display: contents;
+      align-items: stretch;
+    }
 
-#people-image {
-  width: 100%;
-  height: 100%;
-}
+    #people-image {
+      width: 100%;
+      height: 100%;
+    }
 
-.no-underline {
+    .no-underline {
 
-  text-decoration: none;
+      text-decoration: none;
 
-  color: inherit; /* Optionally, use the parent element's text color */
+      color: inherit; /* Optionally, use the parent element's text color */
 
-  cursor: pointer; /* Optionally, change the cursor to a pointer on hover */
+      cursor: pointer; /* Optionally, change the cursor to a pointer on hover */
 
-}
-:root {
-  --fs: 5rem;
-  --lh: 1.25;
-  --shadow-h: 1.25em;
-}
+    }
+    :root {
+      --fs: 5rem;
+      --lh: 1.25;
+      --shadow-h: 1.25em;
+    }
 
-*, :before, :after {
-  margin: 0;
-  box-sizing: border-box;
-}
+    *, :before, :after {
+      margin: 0;
+      box-sizing: border-box;
+    }
 
-body {
+    body {
 
-  font-size: 125%;
-  counter: art;
+      font-size: 125%;
+      counter: art;
 
-  @media (max-width: 200px) {
-      font-size: 62.5%;
-  }
-}
+      @media (max-width: 200px) {
+          font-size: 62.5%;
+      }
+    }
 
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: flex-start;
-}
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      align-items: flex-start;
+    }
 
-article {
-  --wide: 0;
-  --base: calc(var(--wide) * var(--fs));
-  --size: calc(0.25 * var(--fs));
-  --left: calc(0.5 * (1 + var(--wide)) * var(--fs));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  margin: 2em;
-  padding-left: calc(var(--wide) * 1.5 * var(--fs));
-  width: 32em;
-  max-width: 90%;
-  min-height: var(--lh) * var(--fs);
-  font: 1em/ var(--lh) 'Roboto', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
-  counter-increment: art;
-  filter: drop-shadow(-1px 3px 3px rgba(0, 0, 0, 0.15));
+    article {
+      --wide: 0;
+      --base: calc(var(--wide) * var(--fs));
+      --size: calc(0.25 * var(--fs));
+      --left: calc(0.5 * (1 + var(--wide)) * var(--fs));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      margin: 2em;
+      padding-left: calc(var(--wide) * 1.5 * var(--fs));
+      width: 32em;
+      max-width: 90%;
+      min-height: var(--lh) * var(--fs);
+      font: 1em/ var(--lh) 'Roboto', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
+      counter-increment: art;
+      filter: drop-shadow(-1px 3px 3px rgba(0, 0, 0, 0.15));
 
-  @media (min-width: 640px) {
-      --wide: 1;
-  }
+      @media (min-width: 640px) {
+          --wide: 1;
+      }
 
-  &:before, &:after {
+      &:before, &:after {
+          position: absolute;
+      }
+
+      &:before {
+          left: 0.25em;
+          color: #fff;
+          font-size: var(--base);
+          content: '0' counter(art);
+      }
+
+      &:after {
+          --grad: linear-gradient(#fff, #e0e0e0);
+          top: 0;
+          right: 0;
+          bottom: calc(-1 * var(--shadow-h));
+          left: 0;
+          z-index: -1;
+          padding-left: inherit;
+          border-bottom: solid 0.75 * var(--shadow-h) transparent;
+          transform: skewx(calc(var(--wide) * -22.5deg));
+          background: var(--grad) 100% 50%/ calc(100% - (var(--base) + var(--left) + var(--wide) * var(--size)) + 1px) 100% no-repeat padding-box,
+              var(--grad) calc(var(--base) + (1 + 2 * var(--wide)) * var(--size)) 50%/ var(--size) 100% no-repeat padding-box,
+              radial-gradient(ellipse at 100% 50%, rgba(0, 0, 0, 0.13), transparent 35%) 0 50%/ var(--size) 250% content-box,
+              linear-gradient(var(--c0) 50%, var(--c1) 0) padding-box,
+              radial-gradient(rgba(0, 0, 0, 0.1), transparent 70%) 100% 100%/ calc(100% - (var(--base) + 2 * var(--size))) var(--shadow-h) border-box no-repeat;
+          content: '';
+      }
+    }
+
+    h3, p {
+      padding-left: var(--left);
+    }
+
+    h3 {
+      background: linear-gradient(var(--c0), var(--c1));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: capitalize;
+      filter: brightness(0.85);
+    }
+    /* Default styling for the responsive text */
+    .responsive-text {
       position: absolute;
-  }
-
-  &:before {
-      left: 0.25em;
-      color: #fff;
-      font-size: var(--base);
-      content: '0' counter(art);
-  }
-
-  &:after {
-      --grad: linear-gradient(#fff, #e0e0e0);
-      top: 0;
-      right: 0;
-      bottom: calc(-1 * var(--shadow-h));
-      left: 0;
-      z-index: -1;
-      padding-left: inherit;
-      border-bottom: solid 0.75 * var(--shadow-h) transparent;
-      transform: skewx(calc(var(--wide) * -22.5deg));
-      background: var(--grad) 100% 50%/ calc(100% - (var(--base) + var(--left) + var(--wide) * var(--size)) + 1px) 100% no-repeat padding-box,
-          var(--grad) calc(var(--base) + (1 + 2 * var(--wide)) * var(--size)) 50%/ var(--size) 100% no-repeat padding-box,
-          radial-gradient(ellipse at 100% 50%, rgba(0, 0, 0, 0.13), transparent 35%) 0 50%/ var(--size) 250% content-box,
-          linear-gradient(var(--c0) 50%, var(--c1) 0) padding-box,
-          radial-gradient(rgba(0, 0, 0, 0.1), transparent 70%) 100% 100%/ calc(100% - (var(--base) + 2 * var(--size))) var(--shadow-h) border-box no-repeat;
-      content: '';
-  }
-}
-
-h3, p {
-  padding-left: var(--left);
-}
-
-h3 {
-  background: linear-gradient(var(--c0), var(--c1));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-transform: capitalize;
-  filter: brightness(0.85);
-}
-/* Default styling for the responsive text */
-.responsive-text {
+      text-align: center;
+      color: white;
+      font-size: 70px;
+      font-weight: bold;
+    }
+/* Updated CSS for contact-count and ex-customer-count */
+.contact-count,
+.ex-customer-count {
   position: absolute;
   text-align: center;
   color: white;
-  font-size: 70px;
   font-weight: bold;
-}
-.contact-count {
-  top: 50%;
-  left: 50%;
-  transform: translate(-282%, -63%);
-}
-.ex-customer-count {
-  top: 50%;
-  left: 50%;
-  transform: translate(157%, -63%);
+  
 }
 
-/* Responsive styling for ex-customer-count */
-@media (max-width: 700px) {
+/* Responsive styling for contact-count and ex-customer-count */
+@media (max-width: 2560px) {
   .ex-customer-count {
+    font-size: 30px;
+    transform: translate(48px, -32px);
     top: 50%;
-    left: 50%;
-    transform: translate(240%, -63%);
-    font-size: 20px;
+    left: 52%;
   }
   .contact-count {
+    font-size: 30px;
+    transform: translate(-131px, -32px);
     top: 50%;
-    left: 50%;
-    transform: translate(-293%, -63%);
-    font-size: 20px;
-  
+    left: 52%;
   }
 }
-/* Responsive styling for ex-customer-count */
+
+/* Responsive styling for contact-count and ex-customer-count */
+@media (max-width: 768px) {
+  .ex-customer-count {
+    font-size: 30px;
+    transform: translate(48px, -32px);
+    top: 50%;
+    left: 52%;
+  }
+  .contact-count {
+    font-size: 30px;
+    transform: translate(-131px, -32px);
+    top: 50%;
+    left: 52%;
+  }
+}
+
 @media (max-width: 500px) {
   .ex-customer-count {
+    font-size: 20px;
+    transform: translate(24px, -20px);
     top: 50%;
-    left: 50%;
-    transform: translate(314%, -63%);
-    font-size: 24px;
+    left: 52%;
   }
   .contact-count {
+    font-size: 20px;
+    transform: translate(-73px, -20px);
     top: 50%;
-    left: 50%;
-    transform: translate(-432%, -63%);
-    font-size: 24px;
+    left: 52%;
   }
 }
-/* Responsive styling for ex-customer-count */
+
 @media (max-width: 400px) {
-  .ex-customer-count {
+  .ex-customer-count{
+    font-size: 10px;
+    transform: translate(16px, -11px);
     top: 50%;
-    left: 50%;
-    transform: translate(215%, -63%);
-    font-size: 20px;
+    left: 52%;
   }
   .contact-count {
+    font-size: 10px;
+    transform: translate(-46px, -11px);
     top: 50%;
-    left: 50%;
-    transform: translate(-355%, -63%);
-    font-size: 20px;
-  }
-}
-@media (max-width: 500px) {
-  h2{
-    font-size: 1.5rem;
+    left: 52%;
   }
 }
 
 /* Add more media queries as needed for different screen sizes */
+
+    /* Responsive styling for ex-customer-count */
+    @media (max-width: 500px) {
+      h2{
+        font-size: 1rem;
+      }
+    }
+    /* Add more media queries as needed for different screen sizes */
 
 
 </style>

@@ -159,3 +159,6 @@ LOGIN_REDIRECT_URL = 'index1'
 LOGOUT_REDIRECT_URL = 'login'
 
 LOGIN_URL = 'login'
+
+
+

@@ -15,6 +15,7 @@ urlpatterns = [
     path('signin/',views.login_view,name="signin"),
     path('get-products/', views.get_products, name='get_products'), 
     path('event_compose/', views.event_compose_message, name='event_compose_message'),
-   
+    path('fetch_event_customized_email/', views.fetch_event_customized_email, name='fetch_event_customized_email'),
+
 ] 
 

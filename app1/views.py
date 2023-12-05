@@ -99,7 +99,7 @@ def fetch_data(request):
     elif selected_data:
         data = contacts.filter(customer_confidence=selected_data).all()
     elif product_data:
-        data = contacts.filter(contactproduct__product_name=product_data).all()
+        data = contacts.filter(interested_products__contains=product_data).all()
     elif selected_date:
         date_formats = ['%d %m %Y', '%b. %d, %Y', '%B %d, %Y']
         parsed_date = None        
@@ -136,12 +136,15 @@ def fetch_data(request):
     worksheet.append(['name', 'Date_of_enquiry', 'phone_number', 'Email', 'Engaged By', 'State', 'Customer Confidence', 'Products'])  # Adding headers
 
     for contact in data:
+        engaged_by_name = ''
+        if contact.engaged_by:  # Check if engaged_by exists
+            engaged_by_name = contact.engaged_by.employee_name  # If exists, retrieve the employee_name
         worksheet.append([
             contact.first_name,
             contact.date_of_enquiry.replace(tzinfo=None),  # Remove timezone info
             contact.phone,
             contact.email,
-            contact.engaged_by.employee_name,
+            engaged_by_name,  # Use the retrieved employee_name or empty string if engaged_by is None
             contact.state,
             contact.customer_confidence,
             contact.interested_products,
@@ -799,7 +802,6 @@ def get_existing_employee(request):
         {'engaged_by': 'Existing Customer', 'count': ex_customer_count}
     ]
     return JsonResponse(data, safe=False)
-
 
 
 def compose_message(request):

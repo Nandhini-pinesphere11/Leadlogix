@@ -154,6 +154,7 @@ def event_dashboard(request,username, event_id):
 
 
 def event_reports(request, username, event_id):
+    products=ProductType.objects.all()
     # Retrieve the event using the event_id
     event = get_object_or_404(EventType, id=event_id)  # Replace 'EventType' with your event model
 
@@ -217,8 +218,10 @@ def event_reports(request, username, event_id):
         'selected_date': selected_date,
         'engaged_by': engage_filter,
         'username': request.user.username,
+        'products':products,
     }
     return render(request, 'event/event_reports.html', context)
+
 
 def fetch_datas(request,username, event_id):
     event = get_object_or_404(EventType, id=event_id)  # Replace 'EventType' with your event model
@@ -274,12 +277,15 @@ def fetch_datas(request,username, event_id):
     worksheet.append(['name', 'Date_of_enquiry', 'phone_number', 'Email', 'Engaged By', 'State', 'Customer Confidence', 'Products'])  # Adding headers
 
     for contact in data:
+        engaged_by_name = ''
+        if contact.engaged_by:  # Check if engaged_by exists
+            engaged_by_name = contact.engaged_by.employee_name  # If exists, retrieve the employee_name
         worksheet.append([
             contact.first_name,
             contact.date_of_enquiry.replace(tzinfo=None),  # Remove timezone info
             contact.phone,
             contact.email,
-            contact.engaged_by.employee_name,
+            engaged_by_name,
             contact.state,
             contact.customer_confidence,
             contact.interested_products,
@@ -287,6 +293,7 @@ def fetch_datas(request,username, event_id):
 
     workbook.save(response)
     return response
+
 
 
 def event_form(request, event_id):
@@ -518,22 +525,32 @@ def event_compose_message(request):
         # Retrieve the event object
         event_id = request.POST.get('event_id')
         event = get_object_or_404(EventType, id=event_id)
-
+ 
         if form.is_valid():
             # Save the form data
             new_message = form.save(commit=False)
             new_message.event = event
+            # Clear existing attachments before adding new ones
+            new_message.attachments.clear()
+
+            # Handle attachments obtained through AJAX (related to the selected product)
+            attachments_from_ajax = form.cleaned_data['attachments'].split(',')
+            existing_attachments = ComposeAttachment.objects.filter(file__in=attachments_from_ajax)
+            new_attachments = []
+
+            for attachment in attachments_from_ajax:
+                attachment_obj, created = existing_attachments.get_or_create(file=attachment)
+                new_message.attachments.add(attachment_obj)
+                new_attachments.append(attachment_obj)
+
+            # Handle manual attachments (selected through file input)
+            for file in request.FILES.getlist('attachments'):
+                attachment_obj, created = ComposeAttachment.objects.get_or_create(file=file)
+                new_message.attachments.add(attachment_obj)
+                new_attachments.append(attachment_obj)
             new_message.save()
 
-            # Save new attachments
-            attachments = [ComposeAttachment(file=attachment) for attachment in request.FILES.getlist('attachments')]
-            ComposeAttachment.objects.bulk_create(attachments)
-
-            # Associate new attachments with the new_message
-            new_message.attachments.set(attachments)
-
-            # Continue with your email sending logic...
-            # Send email to selected email ids with attachments
+            
             subject = form.cleaned_data['subject']
             message = form.cleaned_data['message']
             from_email = 'leadlogix.communications@gmail.com'
@@ -542,14 +559,13 @@ def event_compose_message(request):
             email = EmailMessage(subject, message, from_email, recipient_list)
 
             # Attachments
-            for attachment in attachments:
-                file_obj = attachment.file.file
-                content_type = getattr(file_obj, 'mimetype', None)
-
-                if not content_type:
-                    content_type, encoding = mimetypes.guess_type(attachment.file.name)
-
-                email.attach(attachment.file.name, file_obj.read(), content_type)
+            for attachment in new_attachments:
+                if attachment.file and attachment.file.file:
+                    file_obj = attachment.file.file
+                    content_type = getattr(file_obj, 'content_type', None)
+                    if not content_type:
+                        content_type, _ = mimetypes.guess_type(attachment.file.name)
+                    email.attach(attachment.file.name, file_obj.read(), content_type)
 
             # Send the email
             email.send()
@@ -559,3 +575,16 @@ def event_compose_message(request):
 
     return render(request, 'event_reports.html', {'form': form})
 
+
+def fetch_event_customized_email(request):
+    product_id = request.GET.get('product_id')
+    try:
+        customized_email = CustomizedEmail.objects.get(product_id=product_id)
+        data = {
+            'subject': customized_email.subject,
+            'message': customized_email.message,
+            'attachments': [str(attachment) for attachment in customized_email.attached_files.all()],
+        }
+        return JsonResponse(data)
+    except CustomizedEmail.DoesNotExist:
+        return JsonResponse({'error': 'CustomizedEmail not found for the selected product'})

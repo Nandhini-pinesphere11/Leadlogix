@@ -303,7 +303,7 @@
                         <!-- Add your styled dropdown here -->
                         <div class="dropdown">
                           <select class="form-control btn btn-primary" id="product" name="product" style="color: white;" onchange="fetchCustomizedEmail()">
-                            <option value="" disabled selected>Select Products Template</option>
+                            <option value="" disabled selected>Select Template</option>
                             {% for product in products %}
                                 <option value="{{ product.id }}">{{ product.product_name }}</option>
                             {% endfor %}
@@ -340,12 +340,11 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-  
+    
     <script>
       $(document).ready(function () {
-        // Function to update form fields based on selected product
-        function updateFormFields(productId) {
+      // Function to update form fields based on selected product
+      function updateFormFields(productId) {
         // Make an AJAX request to get the CustomizedEmail for the selected product
         $.ajax({
           url: '/get_customized_email/',  // Replace with the actual URL to fetch CustomizedEmail
@@ -359,12 +358,16 @@
             // Clear existing attachments and add new ones
             $('#existingAttachments').empty();
             if (data.attachments.length > 0) {
-              // Set the attachments as a comma-separated string
-              $('#existingAttachments').append('<input type="hidden" name="attachments" value="' + data.attachments.join(',') + '">');
-              // Display the attachment names
-              for (var i = 0; i < data.attachments.length; i++) {
-                $('#existingAttachments').append('<p>' + data.attachments[i] + '</p>');
-              }
+              // Display the attachment names as links
+    // Display the attachment names as links
+    for (var i = 0; i < data.attachments.length; i++) {
+        var attachmentLink = $('<a>')
+            .attr('href', '/media/' + data.attachments[i])  // Note the '/media/' prefix
+            .attr('download', data.attachments[i])
+            .text(data.attachments[i]);
+        $('#existingAttachments').append(attachmentLink).append('<br>');
+    }
+
             }
           },
           error: function (error) {
@@ -373,19 +376,15 @@
         });
       }
 
-
-        // Event listener for dropdown change
-        $('#product').on('change', function () {
-          var selectedProductId = $(this).val();
-          // Call the function to update form fields
-          updateFormFields(selectedProductId);
-        });
+      // Event listener for dropdown change
+      $('#product').on('change', function () {
+        var selectedProductId = $(this).val();
+        // Call the function to update form fields
+        updateFormFields(selectedProductId);
       });
-    </script>
-    
+    });
 
-  
-  
+    </script>
   
 <script>
     $(document).ready(function () {
